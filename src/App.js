@@ -1,59 +1,54 @@
-import React from 'react';
-import Slider from './components/slider'
-import PlayButton from './components/play_button'
-import styled from 'styled-components'
-import './App.css';
+import React, { useState } from 'react';
+import TemperatureSlider from './components/slider'
+import GenerateButton from './components/generate_button';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 
-const Styles = styled.div`
-  display: flex;
-  justify-content: center;
-  .title {
-    color: #FFFFFF;
-    justify-content: center;
-    font-size: 3rem;
-  }
-  .head {
-    color: #FFFFFF;
-    
-  }
-`;
+const magentaModel = require('@magenta/music/node/music_vae');
 
-class App extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      temperature: 3
-    }
+export default function App() {
+  const [value, setVal] = useState(1.0)
+  const url = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2';
+  const[modelDisabled, disableModel] = useState(true);
+  const loadModel = () => {
+    const model = new magentaModel.MusicVAE(url);
+    model.initialize().then(() => {
+        console.log(modelDisabled);
+        disableModel(false);
+        console.log(modelDisabled);
+    });
+    return model
   }
+  const [musicvae, init] = useState(loadModel);
 
-  getTemperature = temperature => {
-    this.setState({temperature: temperature});
-    console.log(this.state.temperature, temperature);
-    this.setState({temperature: temperature});
-    console.log(this.state.temperature, temperature);
+  const tempCallback = (val) => {
+    setVal(val);
   }
+  const [player, setPlayer] = useState(new core.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus'));
 
-  render() {
-    return (
-      <Styles>
-        <div className="App">
-          <div className="title">Intellear</div>
-          <div className="head">
-            <Slider sendTemperature={this.getTemperature.bind(this)} />
-            {this.state.temperature}
-            <PlayButton temperature={this.state.temperature} />
-          </div>
-          <div className="middle">
-  
-          </div>
-          <div className="footer">
-  
-          </div>
-        </div>
-      </Styles>
-    );
+  const generate = () => {
+    disableModel(true);
+    return musicvae.sample(1, value)
+    .then((sample) => {
+      disableModel(false);
+      newSample(sample[0]);
+    });
   }
+  const [currentSample, newSample] = useState('');
+
+  return (
+    <Grid container direction="column" spacing={10}>
+      <Grid item><Typography variant="h1">Intellear</Typography></Grid>
+      <Grid item container direction="row" spacing={10}>
+        <Grid item xs={1} />
+        <Grid item xs={3}>
+          <TemperatureSlider defaultValue={value} callback={tempCallback} />
+        </Grid>
+        <Grid item>
+          <GenerateButton temperature={value} callback={generate} disabled={modelDisabled} />
+        </Grid>
+        <Grid item xs={5} />
+      </Grid>
+    </Grid>
+  );
 }
-
-export default App;
