@@ -1,60 +1,108 @@
-import React, { useState } from 'react';
-import TemperatureSlider from './components/slider'
+import React, { useState, useEffect } from 'react';
+import TemperatureSlider from './components/slider';
 import GenerateButton from './components/generate_button';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import RecordPlayTranscribe from './components/RecordPlayTranscribe';
 import { MusicVAE } from '@magenta/music/node/music_vae';
 import PlayButton from './components/play_button';
-
+import Header from './components/Header';
+import { Button } from '@material-ui/core';
+import MicrophoneSwitch from './components/microphone_switch';
 
 export default function App() {
-  const [value, setVal] = useState(1.0)
-  const url = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2';
-  const[modelDisabled, disableModel] = useState(true);
+	const [value, setVal] = useState(1.0);
+	const url =
+		'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2';
+	const [vaeDisabled, disableVAE] = useState(true);
+	const [musicvae, setVAE] = useState('');
+	useEffect(() => {
+		async function loadModel() {
+			disableVAE(true);
+			const model = new MusicVAE(url);
+			await model.initialize();
+			setVAE(model);
+			disableVAE(false);
+		}
+		loadModel();
+	}, []);
 
-  const loadModel = () => {
-    const model = new MusicVAE(url);
-    model.initialize().then(() => {
-        console.log(modelDisabled);
-        disableModel(false);
-        console.log(modelDisabled);
-    });
-    return model
-  }
+	const generate = async () => {
+		disableVAE(true);
+		const sample = await musicvae.sample(1, value);
+		disableVAE(false);
+		newSample(sample[0]);
+	};
 
-  const [musicvae, init] = useState(loadModel);
+	const [currentSample, newSample] = useState('');
+	const [audio, setAudio] = useState(null);
+	const getMic = async () => {
+		try {
+			const audioDevice = await navigator.mediaDevices.getUserMedia({
+				audio: true,
+				video: false,
+			});
+			setAudio(audioDevice);
+		} catch (err) {
+			setAudio(null);
+		}
+	};
 
-  const tempCallback = (val) => {
-    setVal(val);
-  }
+	const stopMic = () => {
+		audio.getTracks().forEach((track) => track.stop());
+		setAudio(null);
+	};
 
-  const generate = () => {
-    disableModel(true);
-    return musicvae.sample(1, value)
-    .then((sample) => {
-      disableModel(false);
-      newSample(sample[0]);
-    });
-  }
+	const toggleMic = (state) => {
+		if (state) {
+			stopMic();
+		} else {
+			getMic();
+		}
+	};
 
-  const [currentSample, newSample] = useState('');
-
-  return (
-    <Grid container direction="column" spacing={10}>
-      <Grid item><Typography variant="h1">Intellear</Typography></Grid>
-      <Grid item container direction="row" spacing={10}>
-        <Grid item xs={1} />
-        <Grid item xs={3}>
-          <TemperatureSlider defaultValue={value} callback={tempCallback} />
-        </Grid>
-        <Grid item>
-          <GenerateButton temperature={value} callback={generate} disabled={modelDisabled} />
-        </Grid>
-        <Grid item>
-          <PlayButton sequence={currentSample} />
-        </Grid>
-        <Grid item xs={5} />
-      </Grid>
-    </Grid>
-  );
+	return (
+		<Grid container direction='column' spacing={10}>
+			<Grid item>
+				<Header switchCallback={toggleMic} />
+			</Grid>
+			<Grid
+				item
+				container
+				direction='row'
+				alignItems='center'
+				justify='center'
+			>
+				<Grid item xs={1} />
+				<Grid item xs={3}>
+					<TemperatureSlider defaultValue={value} callback={setVal} />
+				</Grid>
+				<Grid
+					item
+					container
+					direction='column'
+					alignItems='center'
+					justify='center'
+					xs={4}
+				>
+					<Grid item>
+						<GenerateButton
+							temperature={value}
+							callback={generate}
+							disabled={vaeDisabled}
+						/>
+					</Grid>
+				</Grid>
+				<Grid item xs={1}>
+					<PlayButton sequence={currentSample} />
+				</Grid>
+				<Grid item xs={2}>
+					<RecordPlayTranscribe
+						disabledList={[audio ? false : true, true, true]}
+						audio={audio}
+					/>
+				</Grid>
+				<Grid item xs={1} />
+			</Grid>
+		</Grid>
+	);
 }
