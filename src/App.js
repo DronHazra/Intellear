@@ -25,6 +25,7 @@ export default function App() {
 		}
 		loadModel();
 	}, []);
+	const [currentSample, newSample] = useState(null);
 
 	const generate = async () => {
 		disableVAE(true);
@@ -33,37 +34,10 @@ export default function App() {
 		newSample(sample[0]);
 	};
 
-	const [currentSample, newSample] = useState('');
-	const [audio, setAudio] = useState(null);
-	const getMic = async () => {
-		try {
-			const audioDevice = await navigator.mediaDevices.getUserMedia({
-				audio: true,
-				video: false,
-			});
-			setAudio(audioDevice);
-		} catch (err) {
-			setAudio(null);
-		}
-	};
-
-	const stopMic = () => {
-		audio.getTracks().forEach((track) => track.stop());
-		setAudio(null);
-	};
-
-	const toggleMic = (state) => {
-		if (state) {
-			stopMic();
-		} else {
-			getMic();
-		}
-	};
-
 	return (
 		<Grid container direction='column' spacing={10}>
 			<Grid item>
-				<Header switchCallback={toggleMic} />
+				<Header />
 			</Grid>
 			<Grid
 				item
@@ -92,14 +66,8 @@ export default function App() {
 						/>
 					</Grid>
 				</Grid>
-				<Grid item xs={1}>
-					<PlayButton sequence={currentSample} />
-				</Grid>
-				<Grid item xs={2}>
-					<RecordPlayTranscribe
-						disabledList={[audio ? false : true, true, true]}
-						audio={audio}
-					/>
+				<Grid item>
+					<RecordPlayTranscribe sequence={currentSample} />
 				</Grid>
 				<Grid item xs={1} />
 			</Grid>

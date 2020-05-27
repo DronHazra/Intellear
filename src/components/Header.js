@@ -17,7 +17,6 @@ function Header(props) {
 				<Typography className={classes.typographyStyles}>
 					Intellear
 				</Typography>
-				<MicrophoneSwitch callback={props.switchCallback} />
 			</Toolbar>
 		</AppBar>
 	);

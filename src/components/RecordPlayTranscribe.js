@@ -2,121 +2,69 @@ import React, { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
-import { ReactMediaRecorder } from 'react-media-recorder';
-const options = ['Record', 'Play Recording', 'Transcribe'];
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import StopIcon from '@material-ui/icons/Stop';
+import PlayButtton from './play_button';
+import RecordButton from './record_button';
+import PlayRecordingButton from './play_recording_button';
+import { ReactMic } from 'react-mic';
 
 export default function RecordPlayTranscribe(props) {
-	const [open, setOpen] = useState(false);
-	const anchorRef = React.useRef(null);
-	const [selectedIndex, setSelectedIndex] = useState(0);
-	const [isRecording, setRecording] = useState(false);
-	const [recorder, setRecorder] = useState();
+	const [permission, setPermission] = useState(false);
+	const [audioURL, setAudioURL] = useState('');
+	const [recording, setRecord] = useState(false);
 
-	useEffect(() => {}, []);
-
-	const handleClick = () => {
-		console.info(`You clicked ${options[selectedIndex]}`);
-		switch (selectedIndex) {
-			case 0:
-				break;
-
-			default:
-				break;
+	const toggleRecord = () => {
+		if (recording) {
+			console.log(recording);
+			setRecord(false);
+		} else {
+			setRecord(true);
 		}
 	};
-
-	const handleMenuItemClick = (event, index) => {
-		setSelectedIndex(index);
-		setOpen(false);
-	};
-
-	const handleToggle = () => {
-		setOpen((prevOpen) => !prevOpen);
-	};
-
-	const handleClose = (event) => {
-		if (anchorRef.current && anchorRef.current.contains(event.target)) {
-			return;
-		}
-
-		setOpen(false);
+	useEffect(() => {
+		navigator.getUserMedia(
+			{ audio: true },
+			() => setPermission(true),
+			() => {
+				setPermission(false);
+			}
+		);
+	}, []);
+	const handleStop = (recordedBlob) => {
+		setAudioURL(URL.createObjectURL(recordedBlob.blob));
 	};
 	return (
 		<Grid container direction='column' alignItems='center'>
+			<Grid item>
+				<ReactMic
+					record={recording}
+					onStop={handleStop}
+					channelCount={1}
+				/>
+			</Grid>
 			<Grid item xs={12}>
-				<ButtonGroup
-					variant='outlined'
-					color='secondary'
-					ref={anchorRef}
-					aria-label='split-button'
-				>
-					<Button onClick={handleClick}>
-						{options[selectedIndex]}
-					</Button>
+				<ButtonGroup color='secondary'>
+					<PlayButtton
+						sequence={props.sequence}
+						disabled={props.sequence ? false : true}
+					/>
 					<Button
-						color='secondary'
-						size='small'
-						aria-controls={open ? 'split-button-menu' : undefined}
-						aria-expanded={open ? 'true' : undefined}
-						aria-label='select merge strategy'
-						aria-haspopup='menu'
-						onClick={handleToggle}
+						startIcon={
+							recording ? <StopIcon /> : <FiberManualRecordIcon />
+						}
+						variant={recording ? 'contained' : 'outlined'}
+						disabled={!permission}
+						onClick={toggleRecord}
 					>
-						<ArrowDropDownIcon />
+						Record
 					</Button>
+					<PlayRecordingButton
+						url={audioURL}
+						disabled={audioURL ? false : true}
+					/>
+					<Button disabled={true}>Transcribe</Button>
 				</ButtonGroup>
-				<Popper
-					open={open}
-					anchorEl={anchorRef.current}
-					role={undefined}
-					transition
-					disablePortal
-				>
-					{({ TransitionProps, placement }) => (
-						<Grow
-							{...TransitionProps}
-							style={{
-								transformOrigin:
-									placement === 'bottom'
-										? 'center top'
-										: 'center bottom',
-							}}
-						>
-							<Paper>
-								<ClickAwayListener onClickAway={handleClose}>
-									<MenuList id='split-button-menu'>
-										{options.map((option, index) => (
-											<MenuItem
-												key={option}
-												disabled={
-													props.disabledList[index]
-												}
-												selected={
-													index === selectedIndex
-												}
-												onClick={(event) =>
-													handleMenuItemClick(
-														event,
-														index
-													)
-												}
-											>
-												{option}
-											</MenuItem>
-										))}
-									</MenuList>
-								</ClickAwayListener>
-							</Paper>
-						</Grow>
-					)}
-				</Popper>
 			</Grid>
 		</Grid>
 	);

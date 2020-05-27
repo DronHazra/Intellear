@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
+import Button from '@material-ui/core/Button';
+import HearingIcon from '@material-ui/icons/Hearing';
 import { SoundFontPlayer } from '@magenta/music/node/core';
 
 export default function PlayButton(props) {
@@ -12,16 +12,17 @@ export default function PlayButton(props) {
 	//player.playClick = true;
 
 	const play = () => {
+		player.stop();
 		player.start(props.sequence).then(() => player.stop());
 	};
 	return (
-		<IconButton
-			aria-label='play'
-			color='secondary'
+		<Button
+			{...props}
 			onClick={play}
-			size='medium'
+			startIcon={<HearingIcon />}
+			disabled={props.disabled}
 		>
-			<PlayCircleFilledIcon />
-		</IconButton>
+			Listen
+		</Button>
 	);
 }
