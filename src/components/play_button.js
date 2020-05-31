@@ -4,7 +4,7 @@ import HearingIcon from '@material-ui/icons/Hearing';
 import { SoundFontPlayer } from '@magenta/music/node/core';
 
 export default function PlayButton(props) {
-	const [player, setPlayer] = useState(
+	const [player] = useState(
 		new SoundFontPlayer(
 			'https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus'
 		)

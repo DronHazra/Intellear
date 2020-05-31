@@ -16,7 +16,7 @@ export default function TemperatureSlider(props) {
 			value={value}
 			onChange={handleChange}
 			aria-labelledby='continous-slider'
-			valueLabelDisplay='on'
+			valueLabelDisplay='auto'
 		/>
 	);
 }
