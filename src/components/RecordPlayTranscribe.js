@@ -68,6 +68,7 @@ export default function RecordPlayTranscribe(props) {
 					<PlayButtton
 						sequence={props.sequence}
 						disabled={props.sequence ? false : true}
+						tempo={props.tempo}
 					/>
 					<Button
 						startIcon={

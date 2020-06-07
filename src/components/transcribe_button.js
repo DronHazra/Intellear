@@ -31,12 +31,17 @@ export default function TranscribeButton(props) {
 			const userSequence = noteSequence.notes;
 			sequence.notes.forEach((note, index) => {
 				console.log(note);
-				if (note.pitch !== userSequence[index].pitch) {
+				try {
+					if (note.pitch !== userSequence[index].pitch) {
+						score *= 0.9;
+					}
+				} catch (err) {
 					score *= 0.9;
 				}
 			});
 		}
 		console.log('in scoring');
+		score = Math.round(score);
 		callback(score);
 		//document.getElementsByClassName('score').innerHTML =
 		//'FFFFFFFFFFFFFFFFFFF';
@@ -45,7 +50,7 @@ export default function TranscribeButton(props) {
 	useEffect(() => {
 		if (noteSequence) {
 			const visualizer = new StaffSVGVisualizer(
-				noteSequence,
+				sequence,
 				document.getElementsByClassName(
 					'staffArea'
 				)[0] /*,
@@ -53,7 +58,7 @@ export default function TranscribeButton(props) {
 			);
 			visualizer.redraw();
 		}
-	});
+	}, [noteSequence]);
 
 	const handleClick = () => {
 		console.log('in effect');
@@ -92,7 +97,7 @@ export default function TranscribeButton(props) {
 			onClick={handleClick}
 			variant={transcribing ? 'contained' : 'outlined'}
 		>
-			Transcribe
+			Score
 		</Button>
 	);
 }
