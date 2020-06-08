@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import RecordPlayTranscribe from './components/RecordPlayTranscribe';
 import TemperatureSlider from './components/slider';
 import TempoSlider from './components/tempo_slider';
-import Grid from '@material-ui/core/Grid';
-import RecordPlayTranscribe from './components/RecordPlayTranscribe';
-import { MusicVAE } from '@magenta/music/node/music_vae';
 import Header from './components/Header';
-import green from '@material-ui/core/colors/green';
+import notes from './notes';
 import {
 	createMuiTheme,
-	MuiThemeProvider,
-	CssBaseline,
-	Paper,
-	Typography,
+	ThemeProvider,
 	makeStyles,
+} from '@material-ui/core/styles';
+import {
+	Grid,
+	CssBaseline,
+	Typography,
 	Button,
-	Fade,
-	CircularProgress,
 	Snackbar,
+	Card,
+	CardContent,
 } from '@material-ui/core';
-import Card from '@material-ui/core/Card';
+import green from '@material-ui/core/colors/green';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
+import { MusicVAE } from '@magenta/music/node/music_vae';
 import { sequences } from '@magenta/music/node/core';
-import notes from './notes';
+
 const theme = createMuiTheme({
 	palette: {
 		primary: {
@@ -80,7 +79,7 @@ export default function App() {
 		setGenComplete(false);
 	};
 	return (
-		<MuiThemeProvider theme={theme}>
+		<ThemeProvider theme={theme}>
 			<CssBaseline />
 			<Grid container direction='column' spacing={4}>
 				<Grid item>
@@ -188,6 +187,6 @@ export default function App() {
 					We're done generating — <strong>get ear training!</strong>!
 				</Alert>
 			</Snackbar>
-		</MuiThemeProvider>
+		</ThemeProvider>
 	);
 }

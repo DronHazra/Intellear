@@ -15,13 +15,7 @@ export default function PlayButton(props) {
 		)
 	);
 	const [clickPlayer] = useState(new Player());
-	//player.playClick = true;
-	/*const { tempo } = props;
-	useEffect(() => {
-		if (player) {
-			player.setTempo(tempo);
-		}
-	}, [tempo, player]);*/
+
 	const compareQuantizedNotes = (a, b) => {
 		if (a.quantizedStartStep < b.quantizedStartStep) {
 			return -1;

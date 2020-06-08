@@ -43,21 +43,6 @@ export default function RecordPlayTranscribe(props) {
 		);
 	}, []);
 
-	/*useEffect(() => {
-		console.log(seq);
-		if (seq) {
-			//sequences.quantizeNoteSequence(seq, 4);
-			try {
-				const visualizer = new StaffSVGVisualizer(
-					seq,
-					document.getElementsByClassName('staffArea')[0]
-				);
-				visualizer.redraw();
-			} catch (err) {
-				console.log(err);
-			}
-		}
-	}, [seq]);*/
 	const handleStop = (recordedBlob) => {
 		setAudioURL(URL.createObjectURL(recordedBlob.blob));
 	};

@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@material-ui/core';
 import CreateIcon from '@material-ui/icons/Create';
 import { OnsetsAndFrames } from '@magenta/music/node/transcription';
-import {
-	StaffSVGVisualizer,
-	StaffSVGVisualizerConfig,
-	sequences,
-} from '@magenta/music/node/core';
+import { StaffSVGVisualizer, sequences } from '@magenta/music/node/core';
 
 export default function TranscribeButton(props) {
 	const [model, setModel] = useState(null);
@@ -43,18 +39,13 @@ export default function TranscribeButton(props) {
 		console.log('in scoring');
 		score = Math.round(score);
 		callback(score);
-		//document.getElementsByClassName('score').innerHTML =
-		//'FFFFFFFFFFFFFFFFFFF';
 	}, [noteSequence, sequence]);
 
 	useEffect(() => {
 		if (noteSequence) {
 			const visualizer = new StaffSVGVisualizer(
 				sequence,
-				document.getElementsByClassName(
-					'staffArea'
-				)[0] /*,
-				{ noteRGB: '#fff' }*/
+				document.getElementsByClassName('staffArea')[0]
 			);
 			visualizer.redraw();
 		}
