@@ -17,6 +17,9 @@ import {
 	Snackbar,
 	Card,
 	CardContent,
+	Fade,
+	Backdrop,
+	CircularProgress,
 } from '@material-ui/core';
 import green from '@material-ui/core/colors/green';
 import { Alert, AlertTitle } from '@material-ui/lab';
@@ -40,6 +43,10 @@ const useStyles = makeStyles({
 	},
 	scoreText: {
 		paddingTop: 2,
+	},
+	backdrop: {
+		zIndex: theme.zIndex.drawer + 1,
+		color: '#fff',
 	},
 });
 export default function App() {
@@ -81,6 +88,25 @@ export default function App() {
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
+			<Backdrop
+				open={vaeDisabled}
+				className={classes.backdrop}
+				timeout={500}
+			>
+				<Grid
+					container
+					direction='column'
+					justify='center'
+					alignItems='center'
+				>
+					<Grid item>
+						<CircularProgress color='secondary' />
+					</Grid>
+					<Grid item>
+						<Typography>doing things...</Typography>
+					</Grid>
+				</Grid>
+			</Backdrop>
 			<Grid container direction='column' spacing={4}>
 				<Grid item>
 					<Header />
@@ -101,36 +127,43 @@ export default function App() {
 						spacing={1}
 						alignItems='flex-start'
 					>
-						<TempoSlider callback={setTempo} />
+						<TempoSlider callback={setTempo} timeout={500} />
 						<TemperatureSlider
 							defaultValue={value}
 							callback={setVal}
+							timeout={500}
 						/>
 					</Grid>
 					<Grid item>
-						<Button
-							variant='contained'
-							color='primary'
-							onClick={generate}
-							disabled={vaeDisabled}
-							size='large'
-						>
-							Generate!
-						</Button>
+						<Fade in={!vaeDisabled} timeout={500}>
+							<Button
+								variant='contained'
+								color='primary'
+								onClick={generate}
+								disabled={vaeDisabled}
+								size='large'
+							>
+								Generate!
+							</Button>
+						</Fade>
 					</Grid>
 					<Grid item>
-						<Typography align='left'>
-							First note:{' '}
-							{currentSample
-								? notes[currentSample.notes[0].pitch]
-								: ''}
-						</Typography>
+						<Fade in={!vaeDisabled} timeout={500}>
+							<Typography align='left'>
+								First note:{' '}
+								{currentSample
+									? notes[currentSample.notes[0].pitch]
+									: ''}
+							</Typography>
+						</Fade>
 					</Grid>
 					<Grid item>
 						<RecordPlayTranscribe
 							sequence={currentSample}
 							callback={scoreCallback}
 							tempo={tempo}
+							in={!vaeDisabled}
+							timeout={500}
 						/>
 					</Grid>
 				</Grid>
@@ -142,39 +175,42 @@ export default function App() {
 					justify='center'
 				>
 					<Grid item xs={8}>
-						<Card className={classes.root} elevation={5}>
-							<CardContent>
-								<div className='staffArea'></div>
-								<Typography
-									paragraph
-									className={classes.mainText}
-								>
-									Welcome to Intellear! To start, click{' '}
-									{<span>Generate</span>} and{' '}
-									{<span>Listen</span>} to the AI-Generated
-									sample! Once you're ready, record yourself
-									playing the sample back, and click{' '}
-									{<span>Score</span>} to get graded!
-								</Typography>
-								<Typography
-									paragraph
-									className={classes.mainText}
-								>
-									NOTE: Some AI samples might be a little
-									difficult. You can try slowing down the
-									tempo, or reducing the temperature and
-									re-generating.
-								</Typography>
-								<Typography
-									paragraph
-									className={classes.scoreText}
-								>
-									{currentSample
-										? 'Your score is: {score}!'
-										: ''}
-								</Typography>
-							</CardContent>
-						</Card>
+						<Fade in={!vaeDisabled} timeout={500}>
+							<Card className={classes.root} elevation={5}>
+								<CardContent>
+									<div className='staffArea'></div>
+									<Typography
+										paragraph
+										className={classes.mainText}
+									>
+										Welcome to Intellear! To start, click{' '}
+										{<span>Generate</span>} and{' '}
+										{<span>Listen</span>} to the
+										AI-Generated sample! Once you're ready,
+										record yourself playing the sample back,
+										and click {<span>Score</span>} to get
+										graded!
+									</Typography>
+									<Typography
+										paragraph
+										className={classes.mainText}
+									>
+										NOTE: Some AI samples might be a little
+										difficult. You can try slowing down the
+										tempo, or reducing the temperature and
+										re-generating.
+									</Typography>
+									<Typography
+										paragraph
+										className={classes.scoreText}
+									>
+										{currentSample
+											? `Your score is: ${score}!`
+											: ''}
+									</Typography>
+								</CardContent>
+							</Card>
+						</Fade>
 					</Grid>
 				</Grid>
 			</Grid>

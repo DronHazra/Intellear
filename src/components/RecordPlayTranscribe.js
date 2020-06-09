@@ -9,7 +9,7 @@ import PlayRecordingButton from './play_recording_button';
 import { ReactMic } from 'react-mic';
 import { makeStyles } from '@material-ui/styles';
 import TranscribeButton from './transcribe_button';
-import { StaffSVGVisualizer, sequences } from '@magenta/music/node/core';
+import { Fade } from '@material-ui/core';
 
 const useStyles = makeStyles({
 	root: {
@@ -23,8 +23,10 @@ export default function RecordPlayTranscribe(props) {
 	const [permission, setPermission] = useState(false);
 	const [audioURL, setAudioURL] = useState('');
 	const [recording, setRecord] = useState(false);
-	const [seq, setSeq] = useState(null);
-
+	const [loadIn, setLoadIn] = useState(false);
+	useEffect(() => {
+		const timer = setTimeout(() => setLoadIn(true), 800);
+	});
 	const toggleRecord = () => {
 		if (recording) {
 			console.log(recording);
@@ -49,45 +51,53 @@ export default function RecordPlayTranscribe(props) {
 	return (
 		<Grid container direction='row' alignItems='center'>
 			<Grid item xs={9} container direction='column' alignItems='center'>
-				<ButtonGroup color='primary'>
-					<PlayButtton
-						sequence={props.sequence}
-						disabled={props.sequence ? false : true}
-						tempo={props.tempo}
-					/>
-					<Button
-						startIcon={
-							recording ? <StopIcon /> : <FiberManualRecordIcon />
-						}
-						variant={recording ? 'contained' : 'outlined'}
-						disabled={!permission}
-						onClick={toggleRecord}
-					>
-						Record
-					</Button>
-					<PlayRecordingButton
-						url={audioURL}
-						disabled={audioURL ? false : true}
-					/>
-					<TranscribeButton
-						url={audioURL}
-						sequence={props.sequence}
-						callback={props.callback}
-					/>
-				</ButtonGroup>
+				<Fade in={loadIn} timeout={props.timeout}>
+					<ButtonGroup color='secondary'>
+						<PlayButtton
+							sequence={props.sequence}
+							disabled={props.sequence ? false : true}
+							tempo={props.tempo}
+						/>
+						<Button
+							startIcon={
+								recording ? (
+									<StopIcon />
+								) : (
+									<FiberManualRecordIcon />
+								)
+							}
+							variant={recording ? 'contained' : 'outlined'}
+							disabled={!permission}
+							onClick={toggleRecord}
+						>
+							Record
+						</Button>
+						<PlayRecordingButton
+							url={audioURL}
+							disabled={audioURL ? false : true}
+						/>
+						<TranscribeButton
+							url={audioURL}
+							sequence={props.sequence}
+							callback={props.callback}
+						/>
+					</ButtonGroup>
+				</Fade>
 			</Grid>
 			<Grid item xs={3}>
-				<ReactMic
-					record={recording}
-					onStop={handleStop}
-					channelCount={1}
-					className={classes.root}
-					strokeColor={'#f069aa'}
-					backgroundColor={'#303030'}
-					echoCancellation
-					autoGainControl
-					noiseSuppression
-				/>
+				<Fade in={loadIn} timeout={props.timeout}>
+					<ReactMic
+						record={recording}
+						onStop={handleStop}
+						channelCount={1}
+						className={classes.root}
+						strokeColor={'#f069aa'}
+						backgroundColor={'#303030'}
+						echoCancellation
+						autoGainControl
+						noiseSuppression
+					/>
+				</Fade>
 			</Grid>
 		</Grid>
 	);

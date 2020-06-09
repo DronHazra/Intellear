@@ -1,12 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import HearingIcon from '@material-ui/icons/Hearing';
-import {
-	SoundFontPlayer,
-	sequences,
-	Player,
-	PlayerWithClick,
-} from '@magenta/music/node/core';
+import { SoundFontPlayer, sequences } from '@magenta/music/node/core';
 
 export default function PlayButton(props) {
 	const [player] = useState(
@@ -14,7 +9,6 @@ export default function PlayButton(props) {
 			'https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus'
 		)
 	);
-	const [clickPlayer] = useState(new Player());
 
 	const compareQuantizedNotes = (a, b) => {
 		if (a.quantizedStartStep < b.quantizedStartStep) {
@@ -47,8 +41,6 @@ export default function PlayButton(props) {
 	const play = () => {
 		player.stop();
 		player.start(props.sequence, props.tempo).then(() => player.stop());
-		//clickPlayer.start(makeClickSequence(props.sequence));
-		//clickPlayer.start(makeClickSequence(props.sequence));
 	};
 	return (
 		<Button
