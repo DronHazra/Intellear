@@ -147,12 +147,6 @@ export default function App() {
 								<div className='staffArea'></div>
 								<Typography
 									paragraph
-									className={classes.scoreText}
-								>
-									Your score is: {score}!
-								</Typography>
-								<Typography
-									paragraph
 									className={classes.mainText}
 								>
 									Welcome to Intellear! To start, click{' '}
@@ -170,6 +164,14 @@ export default function App() {
 									difficult. You can try slowing down the
 									tempo, or reducing the temperature and
 									re-generating.
+								</Typography>
+								<Typography
+									paragraph
+									className={classes.scoreText}
+								>
+									{currentSample
+										? 'Your score is: {score}!'
+										: ''}
 								</Typography>
 							</CardContent>
 						</Card>
