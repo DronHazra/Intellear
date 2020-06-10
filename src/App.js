@@ -58,6 +58,7 @@ export default function App() {
 	const [score, setScore] = useState(null);
 	const [tempo, setTempo] = useState(120);
 	const [genComplete, setGenComplete] = useState(false);
+	const [ios] = useState(navigator.userAgent.indexOf('Safari') === -1);
 	const classes = useStyles();
 
 	const scoreCallback = (n) => setScore(n);
@@ -70,7 +71,9 @@ export default function App() {
 			setVAE(model);
 			disableVAE(false);
 		}
-		loadModel();
+		if (!ios) {
+			loadModel();
+		}
 	}, []);
 	const [currentSample, newSample] = useState(null);
 
@@ -103,7 +106,11 @@ export default function App() {
 						<CircularProgress color='secondary' />
 					</Grid>
 					<Grid item>
-						<Typography>doing things...</Typography>
+						<Typography>
+							{ios
+								? 'Sorry, Intellear does not work on Safari. Please use another browser'
+								: 'doing things...'}
+						</Typography>
 					</Grid>
 				</Grid>
 			</Backdrop>
