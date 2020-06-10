@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Typography, Toolbar, Fade } from '@material-ui/core';
+import {
+	AppBar,
+	Typography,
+	Toolbar,
+	Fade,
+	Button,
+	SvgIcon,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { ReactComponent as GithubLogo } from '../iconmonstr-github-1.svg';
 
 const useStyles = makeStyles(() => ({
 	typographyStyles: {
@@ -25,6 +33,18 @@ export default function Header(props) {
 					>
 						Intellear
 					</Typography>
+					<Button
+						color='secondary'
+						endIcon={
+							<SvgIcon>
+								<GithubLogo />
+							</SvgIcon>
+						}
+						href='https://github.com/DronHazra/Intellear'
+						size='large'
+					>
+						Give Feedback
+					</Button>
 				</Toolbar>
 			</AppBar>
 		</Fade>

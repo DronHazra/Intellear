@@ -35,17 +35,18 @@ export default function TranscribeButton(props) {
 					score *= 0.9;
 				}
 			});
+			console.log('in scoring');
+			score = Math.round(score);
+			callback(score);
 		}
-		console.log('in scoring');
-		score = Math.round(score);
-		callback(score);
 	}, [noteSequence, sequence]);
 
 	useEffect(() => {
 		if (noteSequence) {
 			const visualizer = new StaffSVGVisualizer(
 				sequence,
-				document.getElementsByClassName('staffArea')[0]
+				document.getElementsByClassName('staffArea')[0],
+				{ noteRGB: [255, 255, 255] }
 			);
 			visualizer.redraw();
 		}

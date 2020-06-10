@@ -32,7 +32,7 @@ const theme = createMuiTheme({
 			main: green['A200'],
 		},
 		secondary: {
-			main: '#f069aa',
+			main: '#f558a4',
 		},
 		type: 'dark',
 	},
@@ -181,9 +181,13 @@ export default function App() {
 					alignItems='center'
 					justify='center'
 				>
-					<Grid item xs={8}>
+					<Grid item xs={8} spacing={1}>
 						<Fade in={!vaeDisabled} timeout={500}>
-							<Card className={classes.root} elevation={5}>
+							<Card
+								className={classes.root}
+								elevation={5}
+								alignItems='center'
+							>
 								<CardContent>
 									<div className='staffArea'></div>
 									<Typography
@@ -211,8 +215,8 @@ export default function App() {
 										paragraph
 										className={classes.scoreText}
 									>
-										{currentSample
-											? `Your score is: ${score}!`
+										{score
+											? `Your score is: ${score}%!`
 											: ''}
 									</Typography>
 								</CardContent>
