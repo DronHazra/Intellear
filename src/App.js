@@ -58,7 +58,9 @@ export default function App() {
 	const [score, setScore] = useState(null);
 	const [tempo, setTempo] = useState(120);
 	const [genComplete, setGenComplete] = useState(false);
-	const [ios] = useState(navigator.platform === 'iPhone');
+	const [ios] = useState(
+		navigator.platform === 'iPhone' || navigator.platform === 'iPad'
+	);
 	const classes = useStyles();
 
 	const scoreCallback = (n) => setScore(n);
