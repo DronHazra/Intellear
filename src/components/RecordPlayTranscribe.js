@@ -36,13 +36,10 @@ export default function RecordPlayTranscribe(props) {
 		}
 	};
 	useEffect(() => {
-		navigator.mediaDevices.getUserMedia(
-			{ audio: true },
-			() => setPermission(true),
-			() => {
-				setPermission(false);
-			}
-		);
+		navigator.mediaDevices
+			.getUserMedia({ audio: true })
+			.then(setPermission(true))
+			.catch(setPermission(false));
 	}, []);
 
 	const handleStop = (recordedBlob) => {
