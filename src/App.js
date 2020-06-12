@@ -58,9 +58,24 @@ export default function App() {
 	const [score, setScore] = useState(null);
 	const [tempo, setTempo] = useState(120);
 	const [genComplete, setGenComplete] = useState(false);
-	/*const [ios] = useState(
-		navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
-	);*/
+	const [ios] = useState(() => {
+		const iDevices = [
+			'iPad Simulator',
+			'iPhone Simulator',
+			'iPod Simulator',
+			'iPad',
+			'iPhone',
+			'iPod',
+		];
+
+		if (navigator.platform) {
+			while (iDevices.length) {
+				if (navigator.platform === iDevices.pop()) {
+					return true;
+				}
+			}
+		}
+	});
 	const classes = useStyles();
 
 	const scoreCallback = (n) => setScore(n);
@@ -73,26 +88,7 @@ export default function App() {
 			setVAE(model);
 			disableVAE(false);
 		}
-		function iOS() {
-			const iDevices = [
-				'iPad Simulator',
-				'iPhone Simulator',
-				'iPod Simulator',
-				'iPad',
-				'iPhone',
-				'iPod',
-			];
-
-			if (navigator.platform) {
-				while (iDevices.length) {
-					if (navigator.platform === iDevices.pop()) {
-						return true;
-					}
-				}
-			}
-		}
-
-		if (!iOS()) {
+		if (!ios) {
 			loadModel();
 		}
 	}, []);
