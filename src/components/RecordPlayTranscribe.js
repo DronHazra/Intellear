@@ -36,7 +36,7 @@ export default function RecordPlayTranscribe(props) {
 		}
 	};
 	useEffect(() => {
-		navigator.getUserMedia(
+		navigator.mediaDevices.getUserMedia(
 			{ audio: true },
 			() => setPermission(true),
 			() => {
