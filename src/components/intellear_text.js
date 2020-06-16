@@ -45,6 +45,7 @@ export default function TextCard(props) {
 						<Grid item xs={12}>
 							<iframe
 								className={classes.video}
+								title='intellear-vid'
 								width='560'
 								height='315'
 								src='https://www.youtube-nocookie.com/embed/wnxTqxL7pBQ'
