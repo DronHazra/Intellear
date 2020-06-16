@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import RecordPlayTranscribe from './components/RecordPlayTranscribe';
-import TemperatureSlider from './components/slider';
-import TempoSlider from './components/tempo_slider';
 import Header from './components/Header';
-import notes from './notes';
 import {
 	createMuiTheme,
 	ThemeProvider,
@@ -14,30 +11,61 @@ import {
 	CssBaseline,
 	Typography,
 	Button,
+	Slider,
 	Snackbar,
 	Card,
 	CardContent,
+	CardActionArea,
 	Fade,
 	Backdrop,
 	CircularProgress,
+	CardHeader,
+	CardActions,
+	Divider,
+	Collapse,
 } from '@material-ui/core';
-import green from '@material-ui/core/colors/green';
+import { grey, teal } from '@material-ui/core/colors';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { MusicVAE } from '@magenta/music/node/music_vae';
 import { sequences } from '@magenta/music/node/core';
+import TextCard from './components/intellear_text';
 
 const theme = createMuiTheme({
 	palette: {
 		primary: {
-			main: green['A200'],
+			main: grey[900],
 		},
 		secondary: {
-			main: '#f558a4',
+			main: teal['A400'],
 		},
-		type: 'dark',
+		divider: teal['A400'],
+	},
+	overrides: {
+		MuiSlider: {
+			root: {
+				marginBottom: -0.5,
+			},
+			thumb: {
+				height: 16,
+				width: 16,
+				marginTop: -5.25,
+				marginLeft: -10,
+			},
+			valueLabel: {
+				left: '-50%',
+			},
+			track: {
+				height: 6,
+				borderRadius: 4,
+			},
+			rail: {
+				height: 6,
+				borderRadius: 4,
+			},
+		},
 	},
 });
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
 	root: {
 		margin: 6,
 	},
@@ -48,11 +76,19 @@ const useStyles = makeStyles({
 		zIndex: theme.zIndex.drawer + 1,
 		color: '#fff',
 	},
-});
+	cardHeading: {
+		margin: theme.spacing(2.5, 4),
+		fontSize: 20,
+	},
+	content: {
+		margin: theme.spacing(1, 0),
+	},
+}));
 export default function App() {
-	const [value, setVal] = useState(1.0);
+	const [temperature, setTemperature] = useState(1.0);
 	const url =
 		'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2';
+	const [dialogExpanded, setExpanded] = useState(true);
 	const [vaeDisabled, disableVAE] = useState(true);
 	const [musicvae, setVAE] = useState('');
 	const [score, setScore] = useState(null);
@@ -61,6 +97,8 @@ export default function App() {
 	const [ios] = useState(
 		navigator.platform === 'iPhone' || navigator.platform === 'iPad'
 	);
+	const sliderTimeout = 400;
+	const fadeLength = 750;
 	const classes = useStyles();
 
 	const scoreCallback = (n) => setScore(n);
@@ -82,13 +120,16 @@ export default function App() {
 	const generate = () => {
 		setGenComplete(true);
 		musicvae
-			.sample(1, value)
+			.sample(1, temperature)
 			.then((sample) =>
 				newSample(sequences.mergeConsecutiveNotes(sample[0]))
 			);
 	};
 	const handleClose = () => {
 		setGenComplete(false);
+	};
+	const handleExpansion = () => {
+		setExpanded(!dialogExpanded);
 	};
 	return (
 		<ThemeProvider theme={theme}>
@@ -110,7 +151,11 @@ export default function App() {
 					<Grid item>
 						<Typography>
 							{ios
-								? 'Sorry, Intellear does not work on Safari. Please use another browser'
+								? `Looks like you're on iOS! Unfortunately, due to a ${(
+										<a href='https://github.com/WebKit/webkit/blob/4a4870b75b95a836b516163d45a5cbd6f5222562/Source/WebCore/Modules/webaudio/AudioContext.cpp#L109'>
+											Webkit bug
+										</a>
+								  )}, Intellear doesn't work on iOS :(`
 								: 'doing things...'}
 						</Typography>
 					</Grid>
@@ -120,59 +165,149 @@ export default function App() {
 				<Grid item>
 					<Header />
 				</Grid>
+				<Grid item container direction='row'>
+					<Grid item lg={2} />
+					<Grid item xs={12} lg={8}>
+						<Card variant='outlined' className={classes.dialog}>
+							<CardActionArea
+								onClick={handleExpansion}
+								className={classes.cardAction}
+							>
+								<Typography
+									color='primary'
+									variant='h1'
+									className={classes.cardHeading}
+								>
+									Making the music :)
+								</Typography>
+								<Divider />
+							</CardActionArea>
+							<Collapse
+								in={dialogExpanded}
+								timeout='auto'
+								unmountOnExit
+							>
+								<CardContent className={classes.content}>
+									<Grid
+										container
+										direction='row'
+										spacing={1}
+										alignItems='center'
+									>
+										<Grid item xs={2} lg={1}>
+											<Fade
+												in={true}
+												style={{
+													transitionDelay: sliderTimeout,
+												}}
+												timeout={fadeLength}
+											>
+												<Typography align='right'>
+													Tempo
+												</Typography>
+											</Fade>
+										</Grid>
+										<Grid item xs={10} lg={10}>
+											<Fade
+												in={true}
+												style={{
+													transitionDelay: sliderTimeout,
+												}}
+												timeout={fadeLength}
+											>
+												<Slider
+													value={tempo}
+													onChange={(e, newValue) =>
+														setTempo(newValue)
+													}
+													valueLabelDisplay='auto'
+													min={50}
+													max={150}
+													color='secondary'
+												/>
+											</Fade>
+										</Grid>
+										<Grid item xs={false} lg={1} />
+									</Grid>
+									<Grid
+										container
+										direction='row'
+										spacing={1}
+										alignItems='center'
+									>
+										<Grid item xs={2} lg={1}>
+											<Fade
+												in={true}
+												style={{
+													transitionDelay:
+														sliderTimeout + 400,
+												}}
+												timeout={fadeLength}
+											>
+												<Typography align='right'>
+													Difficulty
+												</Typography>
+											</Fade>
+										</Grid>
+										<Grid item xs={10} lg={10}>
+											<Fade
+												in={true}
+												style={{
+													transitionDelay:
+														sliderTimeout + 400,
+												}}
+												timeout={fadeLength}
+											>
+												<Slider
+													value={temperature}
+													onChange={(e, newValue) =>
+														setTemperature(newValue)
+													}
+													valueLabelDisplay='off'
+													color='secondary'
+													min={0.5}
+													step={0.0001}
+													max={3}
+												/>
+											</Fade>
+										</Grid>
+										<Grid item xs={false} lg={1} />
+									</Grid>
+								</CardContent>
+								<Divider />
+							</Collapse>
+							<Fade in={!vaeDisabled} timeout={fadeLength}>
+								<CardActions>
+									<Button
+										variant='outlined'
+										color='primary'
+										onClick={generate}
+										disabled={vaeDisabled}
+										className={classes.generate}
+										fullWidth
+									>
+										Generate!
+									</Button>
+								</CardActions>
+							</Fade>
+						</Card>
+					</Grid>
+					<Grid item lg={2} />
+				</Grid>
 				<Grid
 					item
 					container
 					direction='row'
 					alignItems='center'
-					justify='space-evenly'
-					spacing={2}
+					justify='center'
 				>
-					<Grid
-						item
-						xs={3}
-						container
-						direction='column'
-						spacing={1}
-						alignItems='flex-start'
-					>
-						<TempoSlider callback={setTempo} timeout={500} />
-						<TemperatureSlider
-							defaultValue={value}
-							callback={setVal}
-							timeout={500}
-						/>
-					</Grid>
-					<Grid item>
-						<Fade in={!vaeDisabled} timeout={500}>
-							<Button
-								variant='contained'
-								color='primary'
-								onClick={generate}
-								disabled={vaeDisabled}
-								size='large'
-							>
-								Generate!
-							</Button>
-						</Fade>
-					</Grid>
-					<Grid item>
-						<Fade in={!vaeDisabled} timeout={500}>
-							<Typography align='left'>
-								First note:{' '}
-								{currentSample
-									? notes[currentSample.notes[0].pitch]
-									: ''}
-							</Typography>
-						</Fade>
-					</Grid>
-					<Grid item>
+					<Grid item xs={8}>
 						<RecordPlayTranscribe
 							sequence={currentSample}
 							callback={scoreCallback}
 							tempo={tempo}
-							in={!vaeDisabled}
-							timeout={500}
+							timeout={fadeLength}
+							delay={sliderTimeout + 800}
 						/>
 					</Grid>
 				</Grid>
@@ -183,47 +318,12 @@ export default function App() {
 					alignItems='center'
 					justify='center'
 				>
-					<Grid item xs={8} spacing={1}>
-						<Fade in={!vaeDisabled} timeout={500}>
-							<Card
-								className={classes.root}
-								elevation={5}
-								alignItems='center'
-							>
-								<CardContent>
-									<div className='staffArea'></div>
-									<Typography
-										paragraph
-										className={classes.mainText}
-									>
-										Welcome to Intellear! To start, click{' '}
-										{<span>Generate</span>} and{' '}
-										{<span>Listen</span>} to the
-										AI-Generated sample! Once you're ready,
-										record yourself playing the sample back,
-										and click {<span>Score</span>} to get
-										graded!
-									</Typography>
-									<Typography
-										paragraph
-										className={classes.mainText}
-									>
-										NOTE: Some AI samples might be a little
-										difficult. You can try slowing down the
-										tempo, or reducing the temperature and
-										re-generating.
-									</Typography>
-									<Typography
-										paragraph
-										className={classes.scoreText}
-									>
-										{score
-											? `Your score is: ${score}%!`
-											: ''}
-									</Typography>
-								</CardContent>
-							</Card>
-						</Fade>
+					<Grid item xs={8}>
+						<TextCard
+							in={!vaeDisabled}
+							timeout={fadeLength}
+							score={score}
+						/>
 					</Grid>
 				</Grid>
 			</Grid>
@@ -235,7 +335,7 @@ export default function App() {
 			>
 				<Alert onClose={handleClose} severity='success'>
 					<AlertTitle>Success</AlertTitle>
-					We're done generating — <strong>get ear training!</strong>!
+					We're done generating — <strong>get ear training!</strong>
 				</Alert>
 			</Snackbar>
 		</ThemeProvider>

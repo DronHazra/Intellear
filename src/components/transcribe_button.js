@@ -20,7 +20,7 @@ export default function TranscribeButton(props) {
 		loadModel();
 	}, []);
 
-	const { url, sequence, callback } = props;
+	const { url, sequence, sequenceCallback, ...others } = props;
 	useEffect(() => {
 		let score = 100;
 		if (sequence && noteSequence) {
@@ -37,7 +37,7 @@ export default function TranscribeButton(props) {
 			});
 			console.log('in scoring');
 			score = Math.round(score);
-			callback(score);
+			sequenceCallback(score);
 		}
 	}, [noteSequence, sequence]);
 
@@ -46,7 +46,7 @@ export default function TranscribeButton(props) {
 			const visualizer = new StaffSVGVisualizer(
 				sequence,
 				document.getElementsByClassName('staffArea')[0],
-				{ noteRGB: [255, 255, 255] }
+				{ noteRGB: [33, 33, 33] }
 			);
 			visualizer.redraw();
 		}
@@ -84,10 +84,10 @@ export default function TranscribeButton(props) {
 	};
 	return (
 		<Button
-			{...props}
+			{...others}
 			startIcon={<CreateIcon />}
 			onClick={handleClick}
-			variant={transcribing ? 'contained' : 'outlined'}
+			disabled={props.url ? false : true}
 		>
 			Score
 		</Button>

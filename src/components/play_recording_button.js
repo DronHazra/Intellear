@@ -27,7 +27,6 @@ export default function PlayRecordingButton(props) {
 		<Button
 			{...props}
 			onClick={handleClick}
-			variant={playing ? 'contained' : 'outlined'}
 			startIcon={playing ? <PauseIcon /> : <PlayArrowIcon />}
 			disabled={props.disabled}
 		>

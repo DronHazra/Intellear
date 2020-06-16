@@ -4,17 +4,18 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import StopIcon from '@material-ui/icons/Stop';
+import Typography from '@material-ui/core/Typography';
 import PlayButtton from './play_button';
 import PlayRecordingButton from './play_recording_button';
 import { ReactMic } from 'react-mic';
 import { makeStyles } from '@material-ui/styles';
 import TranscribeButton from './transcribe_button';
 import { Fade } from '@material-ui/core';
+import notes from '../notes';
 
 const useStyles = makeStyles({
 	root: {
-		width: 200,
-		padding: '5px',
+		width: 0,
 	},
 });
 
@@ -23,10 +24,6 @@ export default function RecordPlayTranscribe(props) {
 	const [permission, setPermission] = useState(false);
 	const [audioURL, setAudioURL] = useState('');
 	const [recording, setRecord] = useState(false);
-	const [loadIn, setLoadIn] = useState(false);
-	useEffect(() => {
-		const timer = setTimeout(() => setLoadIn(true), 800);
-	});
 	const toggleRecord = () => {
 		if (recording) {
 			console.log(recording);
@@ -48,10 +45,19 @@ export default function RecordPlayTranscribe(props) {
 		setAudioURL(URL.createObjectURL(recordedBlob.blob));
 	};
 	return (
-		<Grid container direction='row' alignItems='center'>
-			<Grid item xs={9} container direction='column' alignItems='center'>
-				<Fade in={loadIn} timeout={props.timeout}>
-					<ButtonGroup color='secondary'>
+		<Grid container direction='row' alignItems='center' justify='center'>
+			<Grid item xs={12}>
+				<Fade
+					in={true}
+					timeout={props.timeout}
+					style={{ transitionDelay: props.delay }}
+				>
+					<ButtonGroup
+						color='secondary'
+						variant='contained'
+						fullWidth
+						disableElevation
+					>
 						<PlayButtton
 							sequence={props.sequence}
 							disabled={props.sequence ? false : true}
@@ -65,8 +71,6 @@ export default function RecordPlayTranscribe(props) {
 									<FiberManualRecordIcon />
 								)
 							}
-							variant={recording ? 'contained' : 'outlined'}
-							disabled={!permission}
 							onClick={toggleRecord}
 						>
 							Record
@@ -78,25 +82,37 @@ export default function RecordPlayTranscribe(props) {
 						<TranscribeButton
 							url={audioURL}
 							sequence={props.sequence}
-							callback={props.callback}
+							sequenceCallback={props.callback}
 						/>
 					</ButtonGroup>
 				</Fade>
 			</Grid>
-			<Grid item xs={3}>
-				<Fade in={loadIn} timeout={props.timeout}>
-					<ReactMic
-						record={recording}
-						onStop={handleStop}
-						channelCount={1}
-						className={classes.root}
-						strokeColor={'#f069aa'}
-						backgroundColor={'#303030'}
-						echoCancellation
-						autoGainControl
-						noiseSuppression
-					/>
+			<Grid item>
+				<Fade
+					in={props.sequence ? true : false}
+					timeout={props.timeout}
+				>
+					<Typography align='left'>
+						<strong>First note: </strong>
+
+						{props.sequence
+							? notes[props.sequence.notes[0].pitch]
+							: ''}
+					</Typography>
 				</Fade>
+			</Grid>
+			<Grid item xs='auto'>
+				<ReactMic
+					record={recording}
+					onStop={handleStop}
+					channelCount={1}
+					className={classes.root}
+					strokeColor={'#00e5ff'}
+					backgroundColor={'#fafafa'}
+					echoCancellation
+					autoGainControl
+					noiseSuppression
+				/>
 			</Grid>
 		</Grid>
 	);

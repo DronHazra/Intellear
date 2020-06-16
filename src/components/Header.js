@@ -34,7 +34,7 @@ export default function Header(props) {
 						Intellear
 					</Typography>
 					<Button
-						color='secondary'
+						color='inherit'
 						endIcon={
 							<SvgIcon>
 								<GithubLogo />
