@@ -19,7 +19,6 @@ import {
 	Fade,
 	Backdrop,
 	CircularProgress,
-	CardHeader,
 	CardActions,
 	Divider,
 	Collapse,
@@ -114,7 +113,7 @@ export default function App() {
 		if (!ios) {
 			loadModel();
 		}
-	}, []);
+	}, [ios]);
 	const [currentSample, newSample] = useState(null);
 
 	const generate = () => {

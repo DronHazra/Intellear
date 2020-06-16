@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
 	AppBar,
 	Typography,
@@ -18,13 +18,9 @@ const useStyles = makeStyles(() => ({
 
 export default function Header(props) {
 	const classes = useStyles();
-	const [loadIn, setLoadIn] = useState(false);
 
-	useEffect(() => {
-		const timer = setTimeout(() => setLoadIn(true), 100);
-	});
 	return (
-		<Fade in={loadIn} timeout={200}>
+		<Fade in={true} timeout={500}>
 			<AppBar position='static'>
 				<Toolbar>
 					<Typography

@@ -39,18 +39,7 @@ export default function TranscribeButton(props) {
 			score = Math.round(score);
 			sequenceCallback(score);
 		}
-	}, [noteSequence, sequence]);
-
-	useEffect(() => {
-		if (noteSequence) {
-			const visualizer = new StaffSVGVisualizer(
-				sequence,
-				document.getElementsByClassName('staffArea')[0],
-				{ noteRGB: [33, 33, 33] }
-			);
-			visualizer.redraw();
-		}
-	}, [noteSequence]);
+	}, [noteSequence, sequence, sequenceCallback]);
 
 	const handleClick = () => {
 		console.log('in effect');
@@ -79,6 +68,14 @@ export default function TranscribeButton(props) {
 					model.dispose();
 					toggleTranscribe(false);
 				});
+			}
+			if (noteSequence) {
+				const visualizer = new StaffSVGVisualizer(
+					sequence,
+					document.getElementsByClassName('staffArea')[0],
+					{ noteRGB: [33, 33, 33] }
+				);
+				visualizer.redraw();
 			}
 		}
 	};

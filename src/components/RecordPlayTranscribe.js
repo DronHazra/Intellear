@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 
 export default function RecordPlayTranscribe(props) {
 	const classes = useStyles();
-	const [permission, setPermission] = useState(false);
+	//const [permission, setPermission] = useState(false);
 	const [audioURL, setAudioURL] = useState('');
 	const [recording, setRecord] = useState(false);
 	const toggleRecord = () => {
@@ -32,14 +32,14 @@ export default function RecordPlayTranscribe(props) {
 			setRecord(true);
 		}
 	};
-	useEffect(() => {
+	/*useEffect(() => {
 		if (navigator.mediaDevices) {
 			navigator.mediaDevices
 				.getUserMedia({ audio: true })
 				.then(setPermission(true))
 				.catch(setPermission(false));
 		}
-	}, []);
+	}, []);*/
 
 	const handleStop = (recordedBlob) => {
 		setAudioURL(URL.createObjectURL(recordedBlob.blob));
