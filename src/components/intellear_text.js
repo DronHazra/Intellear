@@ -8,7 +8,10 @@ const useStyles = makeStyles((theme) => {
 			padding: theme.spacing(1),
 		},
 		buttonInline: {
-			color: theme.palette.secondary.main,
+			color: theme.palette.secondary.contrastText,
+			backgroundColor: theme.palette.secondary.main,
+			borderRadius: 3,
+			margin: theme.spacing(0.5),
 		},
 	};
 });
@@ -20,23 +23,23 @@ export default function TextCard(props) {
 		<Fade {...fadeProps}>
 			<Card className={classes.root}>
 				<CardContent>
-					<Grid container direction='column' justify='center'>
+					<Grid container direction='column' alignItems='center'>
 						<Grid item>
 							<div className='staffArea'></div>
 						</Grid>
 					</Grid>
-					<Typography paragraph>
-						Welcome to Intellear! To start, click{' '}
-						{<span className={classes.buttonInline}>Generate</span>}{' '}
-						and{' '}
-						{<span className={classes.buttonInline}>Listen</span>}{' '}
-						to the AI-Generated sample! Once you're ready,{' '}
-						{<span className={classes.buttonInline}>Record </span>}
-						yourself playing the sample back, and click{' '}
-						{<span className={classes.buttonInline}>Score</span>} to
+					<Typography paragraph align='justify'>
+						Welcome to Intellear! To start, click
+						{<span className={classes.buttonInline}>Generate</span>}
+						and
+						{<span className={classes.buttonInline}>Listen</span>}
+						to the AI-Generated sample! Once you're ready,
+						{<span className={classes.buttonInline}>Record</span>}
+						yourself playing the sample back, and click
+						{<span className={classes.buttonInline}>Score</span>}to
 						get graded!
 					</Typography>
-					<Typography paragraph>
+					<Typography paragraph align='justify'>
 						NOTE: Some AI samples might be a little difficult. You
 						can try slowing down the tempo, or reducing the
 						temperature and re-generating.
@@ -56,8 +59,11 @@ export default function TextCard(props) {
 						</Grid>
 					</Grid>
 					{score ? (
-						<Typography paragraph className={classes.scoreText}>
-							`Your score is: ${score}%!`
+						<Typography
+							className={classes.scoreText}
+							align='justify'
+						>
+							Your score is: {score}%!
 						</Typography>
 					) : (
 						''

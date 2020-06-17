@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import RecordPlayTranscribe from './components/RecordPlayTranscribe';
 import Header from './components/Header';
-import {
-	createMuiTheme,
-	ThemeProvider,
-	makeStyles,
-} from '@material-ui/core/styles';
+import { ReactComponent as GithubLogo } from './static/iconmonstr-github-1.svg';
+import { makeStyles } from '@material-ui/core/styles';
 import {
 	Grid,
-	CssBaseline,
 	Typography,
 	Button,
 	Slider,
@@ -22,48 +18,15 @@ import {
 	CardActions,
 	Divider,
 	Collapse,
+	SvgIcon,
+	IconButton,
 } from '@material-ui/core';
-import { grey, teal } from '@material-ui/core/colors';
 import { Alert, AlertTitle } from '@material-ui/lab';
+import { teal } from '@material-ui/core/colors';
 import { MusicVAE } from '@magenta/music/node/music_vae';
 import { sequences } from '@magenta/music/node/core';
 import TextCard from './components/intellear_text';
 
-const theme = createMuiTheme({
-	palette: {
-		primary: {
-			main: grey[900],
-		},
-		secondary: {
-			main: teal['A400'],
-		},
-		divider: teal['A400'],
-	},
-	overrides: {
-		MuiSlider: {
-			root: {
-				marginBottom: -0.5,
-			},
-			thumb: {
-				height: 16,
-				width: 16,
-				marginTop: -5.25,
-				marginLeft: -10,
-			},
-			valueLabel: {
-				left: '-50%',
-			},
-			track: {
-				height: 6,
-				borderRadius: 4,
-			},
-			rail: {
-				height: 6,
-				borderRadius: 4,
-			},
-		},
-	},
-});
 const useStyles = makeStyles((theme) => ({
 	root: {
 		margin: 6,
@@ -81,6 +44,12 @@ const useStyles = makeStyles((theme) => ({
 	},
 	content: {
 		margin: theme.spacing(1, 0),
+	},
+	generate: {
+		background: `linear-gradient(60deg, ${teal['A400']}, 40%, ${theme.palette.secondary.main})`,
+	},
+	footer: {
+		marginBottom: theme.spacing(0),
 	},
 }));
 export default function App() {
@@ -131,8 +100,7 @@ export default function App() {
 		setExpanded(!dialogExpanded);
 	};
 	return (
-		<ThemeProvider theme={theme}>
-			<CssBaseline />
+		<React.Fragment>
 			<Backdrop
 				open={vaeDisabled}
 				className={classes.backdrop}
@@ -160,13 +128,11 @@ export default function App() {
 					</Grid>
 				</Grid>
 			</Backdrop>
-			<Grid container direction='column' spacing={4}>
-				<Grid item>
-					<Header />
-				</Grid>
-				<Grid item container direction='row'>
-					<Grid item lg={2} />
-					<Grid item xs={12} lg={8}>
+			<Header />
+			<Grid container direction='column' spacing={4} alignItems='center'>
+				<Grid item />
+				<Grid item container direction='row' justify='center'>
+					<Grid item xs={12} sm={10} md={9} lg={8}>
 						<Card variant='outlined' className={classes.dialog}>
 							<CardActionArea
 								onClick={handleExpansion}
@@ -206,7 +172,7 @@ export default function App() {
 												</Typography>
 											</Fade>
 										</Grid>
-										<Grid item xs={10} lg={10}>
+										<Grid item xs={10} md={9} lg={10}>
 											<Fade
 												in={true}
 												style={{
@@ -226,7 +192,7 @@ export default function App() {
 												/>
 											</Fade>
 										</Grid>
-										<Grid item xs={false} lg={1} />
+										<Grid item xs={false} md={1} />
 									</Grid>
 									<Grid
 										container
@@ -248,7 +214,7 @@ export default function App() {
 												</Typography>
 											</Fade>
 										</Grid>
-										<Grid item xs={10} lg={10}>
+										<Grid item xs={10} md={9} lg={10}>
 											<Fade
 												in={true}
 												style={{
@@ -270,7 +236,7 @@ export default function App() {
 												/>
 											</Fade>
 										</Grid>
-										<Grid item xs={false} lg={1} />
+										<Grid item xs={false} md={1} />
 									</Grid>
 								</CardContent>
 								<Divider />
@@ -278,8 +244,9 @@ export default function App() {
 							<Fade in={!vaeDisabled} timeout={fadeLength}>
 								<CardActions>
 									<Button
-										variant='outlined'
-										color='primary'
+										variant='contained'
+										color='secondary'
+										size='large'
 										onClick={generate}
 										disabled={vaeDisabled}
 										className={classes.generate}
@@ -291,7 +258,6 @@ export default function App() {
 							</Fade>
 						</Card>
 					</Grid>
-					<Grid item lg={2} />
 				</Grid>
 				<Grid
 					item
@@ -300,7 +266,7 @@ export default function App() {
 					alignItems='center'
 					justify='center'
 				>
-					<Grid item xs={8}>
+					<Grid item xs={12} sm={10} md={9} lg={8}>
 						<RecordPlayTranscribe
 							sequence={currentSample}
 							callback={scoreCallback}
@@ -317,13 +283,56 @@ export default function App() {
 					alignItems='center'
 					justify='center'
 				>
-					<Grid item xs={8}>
+					<Grid item xs={12} sm={10} md={9} lg={8}>
 						<TextCard
 							in={!vaeDisabled}
 							timeout={fadeLength}
 							score={score}
 						/>
 					</Grid>
+				</Grid>
+				<Grid
+					item
+					container
+					direction='row'
+					justify='center'
+					alignItems='center'
+					className={classes.footer}
+				>
+					<Grid item xs={4}>
+						<Typography variant='body2' align='right'>
+							Mady by{' '}
+							<a href='https://tks.life/profile/dron.hazra'>
+								Dron Hazra
+							</a>
+						</Typography>
+					</Grid>
+					<Grid item>
+						<IconButton href='https://github.com/DronHazra/Intellear/issues'>
+							<SvgIcon>
+								<GithubLogo />
+							</SvgIcon>
+						</IconButton>
+					</Grid>
+					<Grid item xs={4}>
+						<Typography variant='body2' align='left'>
+							Powered by Magenta
+						</Typography>
+					</Grid>
+				</Grid>
+			</Grid>
+			<Grid
+				item
+				container
+				direction='row'
+				justify='center'
+				alignItems='center'
+				className={classes.footer}
+			>
+				<Grid item>
+					<Typography variant='body2'>
+						Had an issue? Found a bug? Open an issue on the GitHub!
+					</Typography>
 				</Grid>
 			</Grid>
 			<Snackbar
@@ -337,6 +346,6 @@ export default function App() {
 					We're done generating — <strong>get ear training!</strong>
 				</Alert>
 			</Snackbar>
-		</ThemeProvider>
+		</React.Fragment>
 	);
 }

@@ -4,11 +4,11 @@ import {
 	Typography,
 	Toolbar,
 	Fade,
-	Button,
-	SvgIcon,
+	//Button,
+	//SvgIcon,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { ReactComponent as GithubLogo } from '../iconmonstr-github-1.svg';
+//import { ReactComponent as MagentaLogo } from '../static/magenta.svg';
 
 const useStyles = makeStyles(() => ({
 	typographyStyles: {
@@ -29,18 +29,20 @@ export default function Header(props) {
 					>
 						Intellear
 					</Typography>
+					{/*
+					<image src='https://magenta.tensorflow.org/assets/magenta-logo.png' />
 					<Button
-						color='inherit'
+						color='secondary'
 						endIcon={
 							<SvgIcon>
-								<GithubLogo />
+								<MagentaLogo />
 							</SvgIcon>
 						}
-						href='https://github.com/DronHazra/Intellear'
+						href='https://magenta.tensorflow.org/'
 						size='large'
 					>
-						Give Feedback
-					</Button>
+						Powered by{' '}
+					</Button>*/}
 				</Toolbar>
 			</AppBar>
 		</Fade>
