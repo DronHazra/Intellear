@@ -301,7 +301,7 @@ export default function App() {
 				>
 					<Grid item xs={4}>
 						<Typography variant='body2' align='right'>
-							Mady by{' '}
+							Made by{' '}
 							<a href='https://tks.life/profile/dron.hazra'>
 								Dron Hazra
 							</a>
