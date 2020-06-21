@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -6,6 +6,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import StopIcon from '@material-ui/icons/Stop';
 import Typography from '@material-ui/core/Typography';
 import PlayButtton from './play_button';
+import { StepContext } from '../App';
 import PlayRecordingButton from './play_recording_button';
 import { ReactMic } from 'react-mic';
 import { makeStyles } from '@material-ui/styles';
@@ -24,10 +25,13 @@ export default function RecordPlayTranscribe(props) {
 	//const [permission, setPermission] = useState(false);
 	const [audioURL, setAudioURL] = useState('');
 	const [recording, setRecord] = useState(false);
+	const step = useContext(StepContext);
+
 	const toggleRecord = () => {
 		if (recording) {
 			console.log(recording);
 			setRecord(false);
+			step.changeStep(3);
 		} else {
 			setRecord(true);
 		}
@@ -60,7 +64,7 @@ export default function RecordPlayTranscribe(props) {
 					>
 						<PlayButtton
 							sequence={props.sequence}
-							disabled={props.sequence ? false : true}
+							disabled={step.step === 0}
 							tempo={props.tempo}
 						/>
 						<Button
@@ -72,6 +76,7 @@ export default function RecordPlayTranscribe(props) {
 								)
 							}
 							onClick={toggleRecord}
+							disabled={step.step !== 2}
 						>
 							Record
 						</Button>

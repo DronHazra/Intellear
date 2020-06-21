@@ -13,6 +13,9 @@ const useStyles = makeStyles((theme) => {
 			borderRadius: 3,
 			margin: theme.spacing(0.5),
 		},
+		staffArea: {
+			margin: theme.spacing(2),
+		},
 	};
 });
 

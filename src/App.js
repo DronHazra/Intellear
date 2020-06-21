@@ -26,6 +26,12 @@ import { teal } from '@material-ui/core/colors';
 import { MusicVAE } from '@magenta/music/node/music_vae';
 import { sequences } from '@magenta/music/node/core';
 import TextCard from './components/intellear_text';
+import Process from './components/process';
+
+export const StepContext = React.createContext({
+	step: 0,
+	changeStep: () => {},
+});
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -62,6 +68,7 @@ export default function App() {
 	const [score, setScore] = useState(null);
 	const [tempo, setTempo] = useState(120);
 	const [genComplete, setGenComplete] = useState(false);
+	const [activeStep, setActiveStep] = useState(0);
 	const [ios] = useState(
 		navigator.platform === 'iPhone' || navigator.platform === 'iPad'
 	);
@@ -83,15 +90,15 @@ export default function App() {
 			loadModel();
 		}
 	}, [ios]);
+
 	const [currentSample, newSample] = useState(null);
 
 	const generate = () => {
 		setGenComplete(true);
-		musicvae
-			.sample(1, temperature)
-			.then((sample) =>
-				newSample(sequences.mergeConsecutiveNotes(sample[0]))
-			);
+		musicvae.sample(1, temperature).then((sample) => {
+			newSample(sequences.mergeConsecutiveNotes(sample[0]));
+			setActiveStep(1);
+		});
 	};
 	const handleClose = () => {
 		setGenComplete(false);
@@ -100,7 +107,9 @@ export default function App() {
 		setExpanded(!dialogExpanded);
 	};
 	return (
-		<React.Fragment>
+		<StepContext.Provider
+			value={{ step: activeStep, changeStep: setActiveStep }}
+		>
 			<Backdrop
 				open={vaeDisabled}
 				className={classes.backdrop}
@@ -116,21 +125,27 @@ export default function App() {
 						<CircularProgress color='secondary' />
 					</Grid>
 					<Grid item>
-						<Typography>
-							{ios
-								? `Looks like you're on iOS! Unfortunately, due to a ${(
-										<a href='https://github.com/WebKit/webkit/blob/4a4870b75b95a836b516163d45a5cbd6f5222562/Source/WebCore/Modules/webaudio/AudioContext.cpp#L109'>
-											Webkit bug
-										</a>
-								  )}, Intellear doesn't work on iOS :(`
-								: 'doing things...'}
-						</Typography>
+						{ios ? (
+							<Typography>
+								Looks like you're on iOS! Unfortunately, due to
+								a{' '}
+								<a href='https://github.com/WebKit/webkit/blob/4a4870b75b95a836b516163d45a5cbd6f5222562/Source/WebCore/Modules/webaudio/AudioContext.cpp#L109'>
+									Webkit bug
+								</a>
+								, Intellear doesn't work on iOS
+							</Typography>
+						) : (
+							<Typography>doing things...</Typography>
+						)}
 					</Grid>
 				</Grid>
 			</Backdrop>
 			<Header />
 			<Grid container direction='column' spacing={4} alignItems='center'>
 				<Grid item />
+				<Grid item>
+					<Process />
+				</Grid>
 				<Grid item container direction='row' justify='center'>
 					<Grid item xs={12} sm={10} md={9} lg={8}>
 						<Card variant='outlined' className={classes.dialog}>
@@ -346,6 +361,6 @@ export default function App() {
 					We're done generating — <strong>get ear training!</strong>
 				</Alert>
 			</Snackbar>
-		</React.Fragment>
+		</StepContext.Provider>
 	);
 }
