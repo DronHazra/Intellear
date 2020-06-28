@@ -32,15 +32,11 @@ export default function TextCard(props) {
 						</Grid>
 					</Grid>
 					<Typography paragraph align='justify'>
-						Welcome to Intellear! To start, click
-						{<span className={classes.buttonInline}>Generate</span>}
-						and
-						{<span className={classes.buttonInline}>Listen</span>}
-						to the AI-Generated sample! Once you're ready,
-						{<span className={classes.buttonInline}>Record</span>}
-						yourself playing the sample back, and click
-						{<span className={classes.buttonInline}>Score</span>}to
-						get graded!
+						Welcome to Intellear! To start, click{' '}
+						<strong>Generate</strong> and <strong>Listen</strong> to
+						the AI-Generated sample! Once you're ready,{' '}
+						<strong>Record</strong> yourself playing the sample
+						back, and click <strong>Score</strong> to get graded!
 					</Typography>
 					<Typography paragraph align='justify'>
 						NOTE: Some AI samples might be a little difficult. You

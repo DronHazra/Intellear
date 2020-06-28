@@ -3,6 +3,7 @@ import RecordPlayTranscribe from './components/RecordPlayTranscribe';
 import Header from './components/Header';
 import { ReactComponent as GithubLogo } from './static/iconmonstr-github-1.svg';
 import { makeStyles } from '@material-ui/core/styles';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 import {
 	Grid,
 	Typography,
@@ -22,7 +23,6 @@ import {
 	IconButton,
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { teal } from '@material-ui/core/colors';
 import { MusicVAE } from '@magenta/music/node/music_vae';
 import { sequences } from '@magenta/music/node/core';
 import TextCard from './components/intellear_text';
@@ -52,10 +52,22 @@ const useStyles = makeStyles((theme) => ({
 		margin: theme.spacing(1, 0),
 	},
 	generate: {
-		background: `linear-gradient(60deg, ${teal['A400']}, 40%, ${theme.palette.secondary.main})`,
+		transition: theme.transitions.duration.standard,
+		border: `1px solid ${theme.palette.secondary.main}`,
+		'&:hover': {
+			// backgroundColor: `linear-gradient(60deg, ${theme.palette.secondary.light}, ${theme.palette.secondary.main})`,
+			color: theme.palette.secondary.contrastText,
+			backgroundColor: theme.palette.secondary.main,
+		},
 	},
 	footer: {
 		marginBottom: theme.spacing(0),
+	},
+	grid: {
+		margin: theme.spacing(0),
+		flexGrow: 0,
+		maxWidth: `100%`,
+		flexBasis: `100%`,
 	},
 }));
 export default function App() {
@@ -141,7 +153,13 @@ export default function App() {
 				</Grid>
 			</Backdrop>
 			<Header />
-			<Grid container direction='column' spacing={4} alignItems='center'>
+			<Grid
+				container
+				direction='column'
+				spacing={4}
+				alignItems='center'
+				className={classes.grid}
+			>
 				<Grid item />
 				<Grid item>
 					<Process />
@@ -259,13 +277,14 @@ export default function App() {
 							<Fade in={!vaeDisabled} timeout={fadeLength}>
 								<CardActions>
 									<Button
-										variant='contained'
+										variant='outlined'
 										color='secondary'
 										size='large'
 										onClick={generate}
 										disabled={vaeDisabled}
 										className={classes.generate}
 										fullWidth
+										disableElevation
 									>
 										Generate!
 									</Button>
@@ -316,10 +335,7 @@ export default function App() {
 				>
 					<Grid item xs={4}>
 						<Typography variant='body2' align='right'>
-							Made by{' '}
-							<a href='https://tks.life/profile/dron.hazra'>
-								Dron Hazra
-							</a>
+							Intellear
 						</Typography>
 					</Grid>
 					<Grid item>
@@ -336,7 +352,7 @@ export default function App() {
 					</Grid>
 				</Grid>
 			</Grid>
-			<Grid
+			{/* <Grid
 				item
 				container
 				direction='row'
@@ -345,11 +361,11 @@ export default function App() {
 				className={classes.footer}
 			>
 				<Grid item>
-					<Typography variant='body2'>
+					<Typography variant='body2' align='center'>
 						Had an issue? Found a bug? Open an issue on the GitHub!
 					</Typography>
 				</Grid>
-			</Grid>
+			</Grid> */}
 			<Snackbar
 				anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
 				open={genComplete}

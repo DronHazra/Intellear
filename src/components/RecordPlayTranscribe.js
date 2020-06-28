@@ -57,8 +57,8 @@ export default function RecordPlayTranscribe(props) {
 					style={{ transitionDelay: props.delay }}
 				>
 					<ButtonGroup
-						color='primary'
-						variant='outlined'
+						color='secondary'
+						variant='contained'
 						fullWidth
 						disableElevation
 					>

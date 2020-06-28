@@ -3,17 +3,16 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { ThemeProvider, createMuiTheme, CssBaseline } from '@material-ui/core';
-import { grey, cyan } from '@material-ui/core/colors';
 
 const theme = createMuiTheme({
 	palette: {
 		primary: {
-			main: grey[900],
+			main: '#00233D',
 		},
 		secondary: {
-			main: cyan['A400'],
+			main: '#D2338F',
 		},
-		divider: cyan['A400'],
+		divider: '#D2338F',
 	},
 	overrides: {
 		MuiSlider: {
@@ -31,19 +30,19 @@ const theme = createMuiTheme({
 			},
 			track: {
 				height: 6,
-				borderRadius: 4,
+				borderRadius: 6,
 			},
 			rail: {
 				height: 6,
-				borderRadius: 4,
+				borderRadius: 6,
 			},
 		},
 	},
 });
 ReactDOM.render(
 	<React.StrictMode>
+		<CssBaseline />
 		<ThemeProvider theme={theme}>
-			<CssBaseline />
 			<App />
 		</ThemeProvider>
 	</React.StrictMode>,
