@@ -115,7 +115,6 @@ export default function RecordPlayTranscribe(props) {
 					strokeColor={'#00e5ff'}
 					backgroundColor={'#fafafa'}
 					echoCancellation
-					autoGainControl
 					noiseSuppression
 				/>
 			</Grid>

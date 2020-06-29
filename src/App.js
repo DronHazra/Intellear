@@ -20,6 +20,7 @@ import {
 	Collapse,
 	SvgIcon,
 	IconButton,
+	Paper,
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { MusicVAE } from '@magenta/music/node/music_vae';
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 		margin: 6,
 	},
 	scoreText: {
-		paddingTop: 2,
+		fontSize: '1.1rem',
 	},
 	backdrop: {
 		zIndex: theme.zIndex.drawer + 1,
@@ -67,6 +68,13 @@ const useStyles = makeStyles((theme) => ({
 		flexGrow: 0,
 		maxWidth: `100%`,
 		flexBasis: `100%`,
+	},
+	scoreCard: {
+		borderRadius: theme.spacing(4),
+		padding: theme.spacing(2, 0),
+	},
+	scoreElement: {
+		margin: theme.spacing(-3, 0, -2),
 	},
 }));
 export default function App() {
@@ -309,6 +317,37 @@ export default function App() {
 						/>
 					</Grid>
 				</Grid>
+				{score ? (
+					<Grid
+						item
+						container
+						direction='row'
+						alignItems='center'
+						justify='center'
+						className={classes.scoreElement}
+					>
+						<Grid item xs={4} sm={3} md={2}>
+							<Fade
+								in={score ? true : false}
+								timeout={fadeLength}
+							>
+								<Paper
+									className={classes.scoreCard}
+									variant='outlined'
+								>
+									<Typography
+										className={classes.scoreText}
+										align='center'
+									>
+										Your score is: {score}%!
+									</Typography>
+								</Paper>
+							</Fade>
+						</Grid>
+					</Grid>
+				) : (
+					''
+				)}
 				<Grid
 					item
 					container

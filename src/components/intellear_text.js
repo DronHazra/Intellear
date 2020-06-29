@@ -57,16 +57,6 @@ export default function TextCard(props) {
 							/>
 						</Grid>
 					</Grid>
-					{score ? (
-						<Typography
-							className={classes.scoreText}
-							align='justify'
-						>
-							Your score is: {score}%!
-						</Typography>
-					) : (
-						''
-					)}
 				</CardContent>
 			</Card>
 		</Fade>
