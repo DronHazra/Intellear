@@ -3,7 +3,6 @@ import RecordPlayTranscribe from './components/RecordPlayTranscribe';
 import Header from './components/Header';
 import { ReactComponent as GithubLogo } from './static/iconmonstr-github-1.svg';
 import { makeStyles } from '@material-ui/core/styles';
-import { fade } from '@material-ui/core/styles/colorManipulator';
 import {
 	Grid,
 	Typography,
