@@ -447,6 +447,7 @@ export default function App() {
 								Intellear
 							</Typography>
 						</Grid>
+						<Grid item xs={1} />
 						{/* <Grid item>
 							<IconButton href='https://github.com/DronHazra/Intellear/issues'>
 								<SvgIcon>
