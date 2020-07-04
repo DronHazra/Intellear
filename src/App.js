@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import RecordPlayTranscribe from './components/RecordPlayTranscribe';
-import Header from './components/Header';
-import { ReactComponent as GithubLogo } from './static/iconmonstr-github-1.svg';
+import MyHeader from './components/Header';
+// import { ReactComponent as GithubLogo } from './static/iconmonstr-github-1.svg';
 import { makeStyles } from '@material-ui/core/styles';
 import {
 	Grid,
@@ -13,13 +13,9 @@ import {
 	CardContent,
 	CardActionArea,
 	Fade,
-	Backdrop,
-	CircularProgress,
 	CardActions,
 	Divider,
 	Collapse,
-	SvgIcon,
-	IconButton,
 	Paper,
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
@@ -34,6 +30,11 @@ export const StepContext = React.createContext({
 });
 
 const useStyles = makeStyles((theme) => ({
+	app: {
+		zIndex: '3',
+		position: 'relative',
+		marginTop: theme.spacing(-60),
+	},
 	root: {
 		margin: 6,
 	},
@@ -96,7 +97,30 @@ export default function App() {
 	const classes = useStyles();
 
 	const scoreCallback = (n) => setScore(n);
-
+	const fades = {
+		header: 500,
+		subheader: 1000,
+		process: 1500,
+		card: 2000,
+		dialog: 2500,
+	};
+	// useEffect(() => {
+	// 	setTimeout(() => {
+	// 		fades.header = true;
+	// 		setTimeout(() => {
+	// 			fades.subheader = true;
+	// 			setTimeout(() => {
+	// 				fades.process = true;
+	// 				setTimeout(() => {
+	// 					fades.card = true;
+	// 					setTimeout(() => {
+	// 						fades.dialog = true;
+	// 					}, 500);
+	// 				}, 500);
+	// 			}, 500);
+	// 		}, 500);
+	// 	}, 500);
+	// }, []);
 	useEffect(() => {
 		async function loadModel() {
 			disableVAE(true);
@@ -129,7 +153,7 @@ export default function App() {
 		<StepContext.Provider
 			value={{ step: activeStep, changeStep: setActiveStep }}
 		>
-			<Backdrop
+			{/* <Backdrop
 				open={vaeDisabled}
 				className={classes.backdrop}
 				timeout={500}
@@ -158,238 +182,286 @@ export default function App() {
 						)}
 					</Grid>
 				</Grid>
-			</Backdrop>
-			<Header />
-			<Grid
-				container
-				direction='column'
-				spacing={4}
-				alignItems='center'
-				className={classes.grid}
-			>
-				<Grid item />
-				<Grid item>
-					<Process />
-				</Grid>
-				<Grid item container direction='row' justify='center'>
-					<Grid item xs={12} sm={10} md={9} lg={8}>
-						<Card variant='outlined' className={classes.dialog}>
-							<CardActionArea
-								onClick={handleExpansion}
-								className={classes.cardAction}
-							>
-								<Typography
-									color='primary'
-									variant='h1'
-									className={classes.cardHeading}
-								>
-									Making the music :)
-								</Typography>
-								<Divider />
-							</CardActionArea>
-							<Collapse
-								in={dialogExpanded}
-								timeout='auto'
-								unmountOnExit
-							>
-								<CardContent className={classes.content}>
-									<Grid
-										container
-										direction='row'
-										spacing={1}
-										alignItems='center'
-									>
-										<Grid item xs={2} lg={1}>
-											<Fade
-												in={true}
-												style={{
-													transitionDelay: sliderTimeout,
-												}}
-												timeout={fadeLength}
-											>
-												<Typography align='right'>
-													Tempo
-												</Typography>
-											</Fade>
-										</Grid>
-										<Grid item xs={10} md={9} lg={10}>
-											<Fade
-												in={true}
-												style={{
-													transitionDelay: sliderTimeout,
-												}}
-												timeout={fadeLength}
-											>
-												<Slider
-													value={tempo}
-													onChange={(e, newValue) =>
-														setTempo(newValue)
-													}
-													valueLabelDisplay='auto'
-													min={50}
-													max={150}
-													color='secondary'
-												/>
-											</Fade>
-										</Grid>
-										<Grid item xs={false} md={1} />
-									</Grid>
-									<Grid
-										container
-										direction='row'
-										spacing={1}
-										alignItems='center'
-									>
-										<Grid item xs={2} lg={1}>
-											<Fade
-												in={true}
-												style={{
-													transitionDelay:
-														sliderTimeout + 400,
-												}}
-												timeout={fadeLength}
-											>
-												<Typography align='right'>
-													Difficulty
-												</Typography>
-											</Fade>
-										</Grid>
-										<Grid item xs={10} md={9} lg={10}>
-											<Fade
-												in={true}
-												style={{
-													transitionDelay:
-														sliderTimeout + 400,
-												}}
-												timeout={fadeLength}
-											>
-												<Slider
-													value={temperature}
-													onChange={(e, newValue) =>
-														setTemperature(newValue)
-													}
-													valueLabelDisplay='off'
-													color='secondary'
-													min={0.5}
-													step={0.0001}
-													max={3}
-												/>
-											</Fade>
-										</Grid>
-										<Grid item xs={false} md={1} />
-									</Grid>
-								</CardContent>
-								<Divider />
-							</Collapse>
-							<Fade in={!vaeDisabled} timeout={fadeLength}>
-								<CardActions>
-									<Button
-										variant='outlined'
-										color='secondary'
-										size='large'
-										onClick={generate}
-										disabled={vaeDisabled}
-										className={classes.generate}
-										fullWidth
-										disableElevation
-									>
-										Generate!
-									</Button>
-								</CardActions>
-							</Fade>
-						</Card>
-					</Grid>
-				</Grid>
+			</Backdrop> */}
+			<MyHeader
+				inHeader={fades.header}
+				inSubheader={fades.subheader}
+				timeout={fadeLength}
+			/>
+			<div className={classes.app}>
 				<Grid
-					item
 					container
-					direction='row'
+					direction='column'
+					spacing={10}
 					alignItems='center'
-					justify='center'
+					className={classes.grid}
 				>
-					<Grid item xs={12} sm={10} md={9} lg={8}>
-						<RecordPlayTranscribe
-							sequence={currentSample}
-							callback={scoreCallback}
-							tempo={tempo}
+					<Grid item />
+					<Grid item>
+						<Process
+							in={true}
 							timeout={fadeLength}
-							delay={sliderTimeout + 800}
+							style={{ transitionDelay: fades.process }}
 						/>
 					</Grid>
-				</Grid>
-				{score ? (
 					<Grid
 						item
 						container
 						direction='row'
 						alignItems='center'
 						justify='center'
-						className={classes.scoreElement}
 					>
-						<Grid item xs={4} sm={3} md={2}>
-							<Fade
-								in={score ? true : false}
+						<Grid item xs={12} sm={10} md={9} lg={8}>
+							<TextCard
+								in={true}
 								timeout={fadeLength}
+								style={{ transitionDelay: fades.card }}
+								score={score}
+							/>
+						</Grid>
+					</Grid>
+					<Grid item container direction='row' justify='center'>
+						<Grid item xs={12} sm={10} md={9} lg={8}>
+							<Fade
+								in={true}
+								timeout={fadeLength}
+								style={{ transitionDelay: fades.dialog }}
 							>
-								<Paper
-									className={classes.scoreCard}
+								<Card
 									variant='outlined'
+									className={classes.dialog}
 								>
-									<Typography
-										className={classes.scoreText}
-										align='center'
+									<CardActionArea
+										onClick={handleExpansion}
+										className={classes.cardAction}
 									>
-										Your score is: {score}%!
-									</Typography>
-								</Paper>
+										<Typography
+											color='primary'
+											variant='h1'
+											className={classes.cardHeading}
+										>
+											Making the music :)
+										</Typography>
+										<Divider />
+									</CardActionArea>
+									<Collapse
+										in={dialogExpanded}
+										timeout='auto'
+										unmountOnExit
+									>
+										<CardContent
+											className={classes.content}
+										>
+											<Grid
+												container
+												direction='row'
+												spacing={1}
+												alignItems='center'
+											>
+												<Grid item xs={2} lg={1}>
+													<Fade
+														in={true}
+														style={{
+															transitionDelay: sliderTimeout,
+														}}
+														timeout={fadeLength}
+													>
+														<Typography align='right'>
+															Tempo
+														</Typography>
+													</Fade>
+												</Grid>
+												<Grid
+													item
+													xs={10}
+													md={9}
+													lg={10}
+												>
+													<Fade
+														in={true}
+														style={{
+															transitionDelay: sliderTimeout,
+														}}
+														timeout={fadeLength}
+													>
+														<Slider
+															value={tempo}
+															onChange={(
+																e,
+																newValue
+															) =>
+																setTempo(
+																	newValue
+																)
+															}
+															valueLabelDisplay='auto'
+															min={50}
+															max={150}
+															color='secondary'
+														/>
+													</Fade>
+												</Grid>
+												<Grid item xs={false} md={1} />
+											</Grid>
+											<Grid
+												container
+												direction='row'
+												spacing={1}
+												alignItems='center'
+											>
+												<Grid item xs={2} lg={1}>
+													<Fade
+														in={true}
+														style={{
+															transitionDelay:
+																sliderTimeout +
+																400,
+														}}
+														timeout={fadeLength}
+													>
+														<Typography align='right'>
+															Difficulty
+														</Typography>
+													</Fade>
+												</Grid>
+												<Grid
+													item
+													xs={10}
+													md={9}
+													lg={10}
+												>
+													<Fade
+														in={true}
+														style={{
+															transitionDelay:
+																sliderTimeout +
+																400,
+														}}
+														timeout={fadeLength}
+													>
+														<Slider
+															value={temperature}
+															onChange={(
+																e,
+																newValue
+															) =>
+																setTemperature(
+																	newValue
+																)
+															}
+															valueLabelDisplay='off'
+															color='secondary'
+															min={0.5}
+															step={0.0001}
+															max={3}
+														/>
+													</Fade>
+												</Grid>
+												<Grid item xs={false} md={1} />
+											</Grid>
+										</CardContent>
+										<Divider />
+									</Collapse>
+									<Fade
+										in={!vaeDisabled}
+										timeout={fadeLength}
+									>
+										<CardActions>
+											<Button
+												variant='outlined'
+												color='secondary'
+												size='large'
+												onClick={generate}
+												disabled={vaeDisabled}
+												className={classes.generate}
+												fullWidth
+												disableElevation
+											>
+												Generate!
+											</Button>
+										</CardActions>
+									</Fade>
+								</Card>
 							</Fade>
 						</Grid>
 					</Grid>
-				) : (
-					''
-				)}
-				<Grid
-					item
-					container
-					direction='row'
-					alignItems='center'
-					justify='center'
-				>
-					<Grid item xs={12} sm={10} md={9} lg={8}>
-						<TextCard
-							in={!vaeDisabled}
-							timeout={fadeLength}
-							score={score}
-						/>
+					<Grid
+						item
+						container
+						direction='row'
+						alignItems='center'
+						justify='center'
+					>
+						<Grid item xs={12} sm={10} md={9} lg={8}>
+							<RecordPlayTranscribe
+								sequence={currentSample}
+								callback={scoreCallback}
+								tempo={tempo}
+								timeout={fadeLength}
+								delay={sliderTimeout + 800}
+							/>
+						</Grid>
+					</Grid>
+					{score ? (
+						<Grid
+							item
+							container
+							direction='row'
+							alignItems='center'
+							justify='center'
+							className={classes.scoreElement}
+						>
+							<Grid item xs={4} sm={3} md={2}>
+								<Fade
+									in={score ? true : false}
+									timeout={fadeLength}
+								>
+									<Paper
+										className={classes.scoreCard}
+										variant='outlined'
+									>
+										<Typography
+											className={classes.scoreText}
+											align='center'
+										>
+											Your score is: {score}%!
+										</Typography>
+									</Paper>
+								</Fade>
+							</Grid>
+						</Grid>
+					) : (
+						''
+					)}
+
+					<Grid
+						item
+						container
+						direction='row'
+						justify='center'
+						alignItems='center'
+						className={classes.footer}
+					>
+						<Grid item xs={4}>
+							<Typography variant='body2' align='right'>
+								Intellear
+							</Typography>
+						</Grid>
+						{/* <Grid item>
+							<IconButton href='https://github.com/DronHazra/Intellear/issues'>
+								<SvgIcon>
+									<GithubLogo />
+								</SvgIcon>
+							</IconButton>
+						</Grid> */}
+						<Grid item xs={4}>
+							<Typography variant='body2' align='left'>
+								Powered by Magenta
+							</Typography>
+						</Grid>
 					</Grid>
 				</Grid>
-				<Grid
-					item
-					container
-					direction='row'
-					justify='center'
-					alignItems='center'
-					className={classes.footer}
-				>
-					<Grid item xs={4}>
-						<Typography variant='body2' align='right'>
-							Intellear
-						</Typography>
-					</Grid>
-					<Grid item>
-						<IconButton href='https://github.com/DronHazra/Intellear/issues'>
-							<SvgIcon>
-								<GithubLogo />
-							</SvgIcon>
-						</IconButton>
-					</Grid>
-					<Grid item xs={4}>
-						<Typography variant='body2' align='left'>
-							Powered by Magenta
-						</Typography>
-					</Grid>
-				</Grid>
-			</Grid>
+			</div>
 			{/* <Grid
 				item
 				container
