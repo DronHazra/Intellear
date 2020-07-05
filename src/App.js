@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import RecordPlayTranscribe from './components/RecordPlayTranscribe';
 import MyHeader from './components/Header';
 // import { ReactComponent as GithubLogo } from './static/iconmonstr-github-1.svg';
@@ -79,6 +79,9 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 export default function App() {
+	const generateWorker = useRef(
+		new Worker('./worker.js', { type: 'module' })
+	);
 	const [temperature, setTemperature] = useState(1.0);
 	const url =
 		'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2';
@@ -122,25 +125,30 @@ export default function App() {
 	// 	}, 500);
 	// }, []);
 	useEffect(() => {
-		async function loadModel() {
-			disableVAE(true);
-			const model = new MusicVAE(url);
-			await model.initialize();
-			setVAE(model);
-			disableVAE(false);
-		}
-		if (!ios) {
-			loadModel();
-		}
-	}, [ios]);
+		generateWorker.current.postMessage(temperature);
+		generateWorker.current.onmessage = (e) => disableVAE(false);
+	}, []);
+	// useEffect(() => {
+	// 	async function loadModel() {
+	// 		disableVAE(true);
+	// 		const model = new MusicVAE(url);
+	// 		await model.initialize();
+	// 		setVAE(model);
+	// 		disableVAE(false);
+	// 	}
+	// 	if (!ios) {
+	// 		loadModel();
+	// 	}
+	// }, [ios]);
 
 	const [currentSample, newSample] = useState(null);
 
 	const generate = () => {
-		setGenComplete(true);
-		musicvae.sample(1, temperature).then((sample) => {
-			newSample(sequences.mergeConsecutiveNotes(sample[0]));
-			setActiveStep(1);
+		generateWorker.current.postMessage(temperature);
+		disableVAE(true);
+		generateWorker.current.addEventListener('message', (e) => {
+			newSample(e.data);
+			disableVAE(false);
 		});
 	};
 	const handleClose = () => {

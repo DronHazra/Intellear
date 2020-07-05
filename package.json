@@ -18,7 +18,8 @@
 		"react-mic": "^12.4.6",
 		"react-player": "^2.1.0",
 		"react-scripts": "3.4.1",
-		"typeface-roboto": "0.0.75"
+		"typeface-roboto": "0.0.75",
+		"worker-plugin": "^4.0.3"
 	},
 	"scripts": {
 		"start": "react-scripts start",
