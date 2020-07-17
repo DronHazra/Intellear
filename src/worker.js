@@ -1,19 +1,23 @@
-import { MusicVAE } from '@magenta/music/node/music_vae';
-import { sequences } from '@magenta/music/node/core';
-/* eslint-disable no-restricted-globals */
-addEventListener('message', (e) => {
-	console.log('hi!');
-	const musicvae = new MusicVAE(
-		'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2'
-	);
-	postMessage('VAE online');
-	if (typeof e !== 'number') return;
-	musicvae
-		.initialize()
-		.then(() => musicvae.sample(1, e.data))
-		.then((sample) => {
-			postMessage(sequences.mergeConsecutiveNotes(sample[0]));
-		})
-		.then(() => musicvae.dispose())
-		.catch((err) => console.error(err));
-});
+// from magenta docs
+importScripts(
+	'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.4.0/dist/tf.min.js'
+);
+importScripts(
+	'https://cdn.jsdelivr.net/npm/@magenta/music@^1.12.0/es6/core.js'
+);
+importScripts(
+	'https://cdn.jsdelivr.net/npm/@magenta/music@^1.12.0/es6/music_vae.js'
+);
+
+const mvae = new music_vae.MusicVAE(
+	'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2'
+);
+
+export async function generate(temp) {
+	if (!mvae.isInitialized()) {
+		await mvae.initialize();
+	}
+
+	const output = await mvae.sample(1);
+	return output[0];
+}

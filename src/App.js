@@ -23,7 +23,8 @@ import { MusicVAE } from '@magenta/music/node/music_vae';
 import { sequences } from '@magenta/music/node/core';
 import TextCard from './components/intellear_text';
 import Process from './components/process';
-
+//eslint-disable-next-line
+import worker from 'workerize-loader!./worker.js';
 export const StepContext = React.createContext({
 	step: 0,
 	changeStep: () => {},
@@ -78,15 +79,14 @@ const useStyles = makeStyles((theme) => ({
 		margin: theme.spacing(-3, 0, -2),
 	},
 }));
+// const generateWorker = new GenerateWorker();
+
 export default function App() {
-	const generateWorker = useRef(
-		new Worker('./worker.js', { type: 'module' })
-	);
 	const [temperature, setTemperature] = useState(1.0);
 	const url =
 		'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2';
 	const [dialogExpanded, setExpanded] = useState(true);
-	const [vaeDisabled, disableVAE] = useState(true);
+	const [vaeDisabled, disableVAE] = useState(false);
 	const [musicvae, setVAE] = useState('');
 	const [score, setScore] = useState(null);
 	const [tempo, setTempo] = useState(120);
@@ -98,8 +98,10 @@ export default function App() {
 	const sliderTimeout = 400;
 	const fadeLength = 750;
 	const classes = useStyles();
-
+	const [scoreSnack, setScoreSnack] = useState(false);
 	const scoreCallback = (n) => setScore(n);
+	const model = new MusicVAE(url);
+	let instance = worker();
 	const fades = {
 		header: 500,
 		subheader: 1000,
@@ -124,10 +126,7 @@ export default function App() {
 	// 		}, 500);
 	// 	}, 500);
 	// }, []);
-	useEffect(() => {
-		generateWorker.current.postMessage(temperature);
-		generateWorker.current.onmessage = (e) => disableVAE(false);
-	}, []);
+
 	// useEffect(() => {
 	// 	async function loadModel() {
 	// 		disableVAE(true);
@@ -143,19 +142,40 @@ export default function App() {
 
 	const [currentSample, newSample] = useState(null);
 
-	const generate = () => {
-		generateWorker.current.postMessage(temperature);
-		disableVAE(true);
-		generateWorker.current.addEventListener('message', (e) => {
-			newSample(e.data);
-			disableVAE(false);
-		});
-	};
+	// generateWorker.onmessage = (event) => {
+	// 	switch (event.data.nature) {
+	// 		case 'message':
+	// 			console.log(event.data.content);
+	// 			break;
+	// 		case 'error':
+	// 			console.error(event.data.content);
+	// 			break;
+	// 		case 'sequence':
+	// 			console.log(event.data.content);
+	// 			newSample(event.data.content);
+	// 			step.changeStep(1);
+	// 			break;
+	// 		default:
+	// 			break;
+	// 	}
+	// };
+
 	const handleClose = () => {
 		setGenComplete(false);
 	};
 	const handleExpansion = () => {
 		setExpanded(!dialogExpanded);
+	};
+	useEffect(() => {
+		setScoreSnack(true);
+	}, [score, scoreSnack]);
+	const generate = () => {
+		disableVAE(true);
+		instance.generate(temperature).then((sample) => {
+			newSample(sequences.mergeConsecutiveNotes(sample));
+			setActiveStep(1);
+			disableVAE(false);
+		});
 	};
 	return (
 		<StepContext.Provider
@@ -410,7 +430,7 @@ export default function App() {
 							/>
 						</Grid>
 					</Grid>
-					{score ? (
+					{/* {score ? (
 						<Grid
 							item
 							container
@@ -440,7 +460,7 @@ export default function App() {
 						</Grid>
 					) : (
 						''
-					)}
+					)} */}
 
 					<Grid
 						item
@@ -492,8 +512,19 @@ export default function App() {
 				autoHideDuration={6000}
 			>
 				<Alert onClose={handleClose} severity='success'>
-					<AlertTitle>Success</AlertTitle>
+					<AlertTitle>Success!</AlertTitle>
 					We're done generating — <strong>get ear training!</strong>
+				</Alert>
+			</Snackbar>
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+				open={genComplete}
+				onClose={() => setScoreSnack(false)}
+				autoHideDuration={6000}
+			>
+				<Alert onClose={() => setScoreSnack(false)} severity='success'>
+					<AlertTitle>Success!</AlertTitle>
+					Your robots are done! Your score is {score}%.
 				</Alert>
 			</Snackbar>
 		</StepContext.Provider>
