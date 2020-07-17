@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import RecordPlayTranscribe from './components/RecordPlayTranscribe';
 import MyHeader from './components/Header';
 // import { ReactComponent as GithubLogo } from './static/iconmonstr-github-1.svg';
@@ -20,8 +20,7 @@ import {
 	Backdrop,
 	LinearProgress,
 } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
-import { MusicVAE } from '@magenta/music/node/music_vae';
+import { Alert } from '@material-ui/lab';
 import { sequences } from '@magenta/music/node/core';
 import TextCard from './components/intellear_text';
 import Process from './components/process';
@@ -88,8 +87,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function App() {
 	const [temperature, setTemperature] = useState(1.0);
-	const url =
-		'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2';
 	const [dialogExpanded, setExpanded] = useState(true);
 	const [score, setScore] = useState(null);
 	const [tempo, setTempo] = useState(120);
