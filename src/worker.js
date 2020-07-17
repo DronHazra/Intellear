@@ -18,6 +18,6 @@ export async function generate(temp) {
 		await mvae.initialize();
 	}
 
-	const output = await mvae.sample(1);
+	const output = await mvae.sample(1, temp);
 	return output[0];
 }
