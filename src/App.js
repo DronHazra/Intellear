@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import RecordPlayTranscribe from './components/RecordPlayTranscribe';
-import MyHeader from './components/Header';
 // import { ReactComponent as GithubLogo } from './static/iconmonstr-github-1.svg';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -30,7 +29,6 @@ import Process from './components/process';
 import Favorite from '@material-ui/icons/Favorite';
 //eslint-disable-next-line
 import worker from 'workerize-loader!./worker.js';
-import Footer from './material_kit_react/Footer/Footer';
 
 export const AppContext = React.createContext({
 	step: 0,
