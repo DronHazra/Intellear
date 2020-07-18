@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
 import { Stepper, StepLabel, Step, makeStyles, Fade } from '@material-ui/core';
-import { StepContext } from '../App';
+import { AppContext } from '../App';
 function getSteps() {
 	return [
 		'Generate w/ MusicVAE',
 		'Listen',
 		'Record yourself',
+		'Listen to recording',
 		'Get a score!',
 	];
 }
@@ -14,14 +15,13 @@ const useStyles = makeStyles((theme) => {
 	return {
 		root: {
 			borderRadius: '3rem',
-			marginBottom: theme.spacing(10),
 		},
 	};
 });
 
 export default function Process(props) {
 	const steps = getSteps();
-	const step = useContext(StepContext);
+	const step = useContext(AppContext);
 	const classes = useStyles();
 	return (
 		<Fade {...props}>

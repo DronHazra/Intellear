@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import RecordPlayTranscribe from './components/RecordPlayTranscribe';
 import MyHeader from './components/Header';
 // import { ReactComponent as GithubLogo } from './static/iconmonstr-github-1.svg';
@@ -17,23 +17,28 @@ import {
 	Divider,
 	Collapse,
 	Paper,
+	Backdrop,
+	LinearProgress,
 } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
-import { MusicVAE } from '@magenta/music/node/music_vae';
+import { Alert } from '@material-ui/lab';
 import { sequences } from '@magenta/music/node/core';
 import TextCard from './components/intellear_text';
 import Process from './components/process';
+//eslint-disable-next-line
+import worker from 'workerize-loader!./worker.js';
 
-export const StepContext = React.createContext({
+export const AppContext = React.createContext({
 	step: 0,
 	changeStep: () => {},
+	recordingBroken: false,
+	safari: window.webkitOfflineAudioContext ? true : false,
 });
 
 const useStyles = makeStyles((theme) => ({
 	app: {
 		zIndex: '3',
 		position: 'relative',
-		marginTop: theme.spacing(-60),
+		marginTop: theme.spacing(-47),
 	},
 	root: {
 		margin: 6,
@@ -78,85 +83,66 @@ const useStyles = makeStyles((theme) => ({
 		margin: theme.spacing(-3, 0, -2),
 	},
 }));
+// const generateWorker = new GenerateWorker();
+
 export default function App() {
 	const [temperature, setTemperature] = useState(1.0);
-	const url =
-		'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2';
 	const [dialogExpanded, setExpanded] = useState(true);
-	const [vaeDisabled, disableVAE] = useState(true);
-	const [musicvae, setVAE] = useState('');
 	const [score, setScore] = useState(null);
 	const [tempo, setTempo] = useState(120);
+	const [isGenerating, setGenerating] = useState(false);
 	const [genComplete, setGenComplete] = useState(false);
 	const [activeStep, setActiveStep] = useState(0);
-	const [ios] = useState(
-		navigator.platform === 'iPhone' || navigator.platform === 'iPad'
-	);
+	let safari = window.webkitOfflineAudioContext ? true : false;
 	const sliderTimeout = 400;
 	const fadeLength = 750;
 	const classes = useStyles();
-
-	const scoreCallback = (n) => setScore(n);
+	const [scoreSnack, setScoreSnack] = useState(false);
+	const scoreCallback = (n) => {
+		setScoreSnack(true);
+		setScore(n);
+	};
+	let instance = worker();
 	const fades = {
 		header: 500,
-		subheader: 1000,
-		process: 1500,
-		card: 2000,
-		dialog: 2500,
+		subheader: 800,
+		card: 1100,
+		video: 1400,
+		process: 1400,
+		dialog: 1700,
 	};
-	// useEffect(() => {
-	// 	setTimeout(() => {
-	// 		fades.header = true;
-	// 		setTimeout(() => {
-	// 			fades.subheader = true;
-	// 			setTimeout(() => {
-	// 				fades.process = true;
-	// 				setTimeout(() => {
-	// 					fades.card = true;
-	// 					setTimeout(() => {
-	// 						fades.dialog = true;
-	// 					}, 500);
-	// 				}, 500);
-	// 			}, 500);
-	// 		}, 500);
-	// 	}, 500);
-	// }, []);
-	useEffect(() => {
-		async function loadModel() {
-			disableVAE(true);
-			const model = new MusicVAE(url);
-			await model.initialize();
-			setVAE(model);
-			disableVAE(false);
-		}
-		if (!ios) {
-			loadModel();
-		}
-	}, [ios]);
 
 	const [currentSample, newSample] = useState(null);
 
-	const generate = () => {
-		setGenComplete(true);
-		musicvae.sample(1, temperature).then((sample) => {
-			newSample(sequences.mergeConsecutiveNotes(sample[0]));
-			setActiveStep(1);
-		});
-	};
 	const handleClose = () => {
 		setGenComplete(false);
 	};
 	const handleExpansion = () => {
 		setExpanded(!dialogExpanded);
 	};
+	// useEffect(() => {
+	// 	setScoreSnack(true);
+	// }, [score, scoreSnack]);
+	const generate = () => {
+		setGenerating(true);
+		instance.generate(temperature).then((sample) => {
+			newSample(sequences.mergeConsecutiveNotes(sample));
+			setActiveStep(1);
+			setGenerating(false);
+			setGenComplete(true);
+		});
+	};
 	return (
-		<StepContext.Provider
-			value={{ step: activeStep, changeStep: setActiveStep }}
+		<AppContext.Provider
+			value={{
+				step: activeStep,
+				changeStep: setActiveStep,
+				recordingBroken: navigator.mediaDevices ? false : true,
+			}}
 		>
-			{/* <Backdrop
-				open={vaeDisabled}
+			<Backdrop
+				open={navigator.userAgent.indexOf('iPhone OS 12_0') >= 0}
 				className={classes.backdrop}
-				timeout={500}
 			>
 				<Grid
 					container
@@ -165,24 +151,59 @@ export default function App() {
 					alignItems='center'
 				>
 					<Grid item>
-						<CircularProgress color='secondary' />
-					</Grid>
-					<Grid item>
-						{ios ? (
-							<Typography>
-								Looks like you're on iOS! Unfortunately, due to
-								a{' '}
-								<a href='https://github.com/WebKit/webkit/blob/4a4870b75b95a836b516163d45a5cbd6f5222562/Source/WebCore/Modules/webaudio/AudioContext.cpp#L109'>
-									Webkit bug
-								</a>
-								, Intellear doesn't work on iOS
-							</Typography>
-						) : (
-							<Typography>doing things...</Typography>
-						)}
+						<Typography color='inherit'>
+							Because of some WebAudio issues, we can't get
+							Intellear to work on your iOS device :(. It works on
+							Android and desktop browsers, so we suggest using
+							another device. Sorry about that ;-;
+						</Typography>
 					</Grid>
 				</Grid>
-			</Backdrop> */}
+			</Backdrop>
+			<Backdrop
+				open={safari}
+				className={classes.backdrop}
+				onClick={() => (safari = false)}
+			>
+				<Grid
+					container
+					direction='column'
+					justify='center'
+					alignItems='center'
+				>
+					<Grid item>
+						<Typography color='inherit'>
+							It looks like you're using Safari! Unfortunately
+							because of a
+							<a href='https://github.com/WebKit/webkit/blob/4a4870b75b95a836b516163d45a5cbd6f5222562/Source/WebCore/Modules/webaudio/AudioContext.cpp#L109'>
+								WebKit bug
+							</a>
+							, transcription is significantly slower on Safari
+							than other browsers.
+						</Typography>
+					</Grid>
+				</Grid>
+			</Backdrop>
+			<Backdrop
+				open={navigator.userAgent.indexOf('iPhone OS 12_0') >= 0}
+				className={classes.backdrop}
+			>
+				<Grid
+					container
+					direction='column'
+					justify='center'
+					alignItems='center'
+				>
+					<Grid item>
+						<Typography color='inherit'>
+							Because of some WebAudio issues, we can't get
+							Intellear to work on your iOS device :(. It works on
+							Android and desktop browsers, so we suggest using
+							another device. Sorry about that ;-;
+						</Typography>
+					</Grid>
+				</Grid>
+			</Backdrop>
 			<MyHeader
 				inHeader={fades.header}
 				inSubheader={fades.subheader}
@@ -197,13 +218,6 @@ export default function App() {
 					className={classes.grid}
 				>
 					<Grid item />
-					<Grid item>
-						<Process
-							in={true}
-							timeout={fadeLength}
-							style={{ transitionDelay: fades.process }}
-						/>
-					</Grid>
 					<Grid
 						item
 						container
@@ -220,6 +234,15 @@ export default function App() {
 							/>
 						</Grid>
 					</Grid>
+
+					<Grid item>
+						<Process
+							in={true}
+							timeout={fadeLength}
+							style={{ transitionDelay: fades.process }}
+						/>
+					</Grid>
+
 					<Grid item container direction='row' justify='center'>
 						<Grid item xs={12} sm={10} md={9} lg={8}>
 							<Fade
@@ -359,32 +382,73 @@ export default function App() {
 												</Grid>
 												<Grid item xs={false} md={1} />
 											</Grid>
+											<div className='staffArea'></div>
 										</CardContent>
 										<Divider />
 									</Collapse>
-									<Fade
-										in={!vaeDisabled}
-										timeout={fadeLength}
-									>
-										<CardActions>
-											<Button
-												variant='outlined'
-												color='secondary'
-												size='large'
-												onClick={generate}
-												disabled={vaeDisabled}
-												className={classes.generate}
-												fullWidth
-												disableElevation
-											>
-												Generate!
-											</Button>
-										</CardActions>
-									</Fade>
+									<div className='placeholder'>
+										<Fade
+											in={isGenerating}
+											style={{
+												transitionDelay: isGenerating
+													? '800ms'
+													: '0ms',
+											}}
+											unmountOnExit
+										>
+											<LinearProgress color='secondary' />
+										</Fade>
+									</div>
+									<CardActions>
+										<Button
+											variant='outlined'
+											color='secondary'
+											size='large'
+											onClick={generate}
+											className={classes.generate}
+											fullWidth
+											disableElevation
+										>
+											Generate!
+										</Button>
+									</CardActions>
 								</Card>
 							</Fade>
 						</Grid>
 					</Grid>
+					{score ? (
+						<>
+							<Grid
+								item
+								container
+								direction='row'
+								alignItems='center'
+								justify='center'
+								className={classes.scoreElement}
+							>
+								<Grid item xs={4} sm={3} md={2}>
+									<Fade
+										in={score ? true : false}
+										timeout={fadeLength}
+									>
+										<Paper
+											className={classes.scoreCard}
+											variant='outlined'
+										>
+											<Typography
+												className={classes.scoreText}
+												align='center'
+											>
+												Your score is: {score}%!
+											</Typography>
+										</Paper>
+									</Fade>
+								</Grid>
+							</Grid>
+						</>
+					) : (
+						''
+					)}
 					<Grid
 						item
 						container
@@ -402,38 +466,32 @@ export default function App() {
 							/>
 						</Grid>
 					</Grid>
-					{score ? (
-						<Grid
-							item
-							container
-							direction='row'
-							alignItems='center'
-							justify='center'
-							className={classes.scoreElement}
-						>
-							<Grid item xs={4} sm={3} md={2}>
-								<Fade
-									in={score ? true : false}
-									timeout={fadeLength}
-								>
-									<Paper
-										className={classes.scoreCard}
-										variant='outlined'
-									>
-										<Typography
-											className={classes.scoreText}
-											align='center'
-										>
-											Your score is: {score}%!
-										</Typography>
-									</Paper>
-								</Fade>
-							</Grid>
+					<Grid
+						item
+						container
+						direction='column'
+						alignContent='center'
+					>
+						<Grid item>
+							<Fade
+								in={true}
+								timeout={fadeLength}
+								style={{ transitionDelay: fades.video }}
+							>
+								<iframe
+									className={classes.video}
+									title='intellear-vid'
+									width='560'
+									height='315'
+									src='https://www.youtube-nocookie.com/embed/wnxTqxL7pBQ'
+									allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'
+									scrolling='auto'
+									frameBorder='0'
+									allowFullScreen
+								/>
+							</Fade>
 						</Grid>
-					) : (
-						''
-					)}
-
+					</Grid>
 					<Grid
 						item
 						container
@@ -480,14 +538,23 @@ export default function App() {
 			<Snackbar
 				anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
 				open={genComplete}
-				onClose={handleClose}
+				onClose={() => setGenComplete(false)}
 				autoHideDuration={6000}
 			>
 				<Alert onClose={handleClose} severity='success'>
-					<AlertTitle>Success</AlertTitle>
 					We're done generating — <strong>get ear training!</strong>
 				</Alert>
 			</Snackbar>
-		</StepContext.Provider>
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+				open={scoreSnack}
+				onClose={() => setScoreSnack(false)}
+				autoHideDuration={6000}
+			>
+				<Alert onClose={() => setScoreSnack(false)} severity='success'>
+					Your robots are done! Your score is {score}%.
+				</Alert>
+			</Snackbar>
+		</AppContext.Provider>
 	);
 }
