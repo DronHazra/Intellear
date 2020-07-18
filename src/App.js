@@ -26,6 +26,7 @@ import TextCard from './components/intellear_text';
 import Process from './components/process';
 //eslint-disable-next-line
 import worker from 'workerize-loader!./worker.js';
+import Footer from './material_kit_react/Footer/Footer';
 
 export const AppContext = React.createContext({
 	step: 0,
@@ -492,7 +493,7 @@ export default function App() {
 							</Fade>
 						</Grid>
 					</Grid>
-					<Grid
+					{/* <Grid
 						item
 						container
 						direction='row'
@@ -513,13 +514,14 @@ export default function App() {
 								</SvgIcon>
 							</IconButton>
 						</Grid> */}
-						<Grid item xs={4}>
+					{/* <Grid item xs={4}>
 							<Typography variant='body2' align='left'>
 								Powered by Magenta
 							</Typography>
-						</Grid>
-					</Grid>
+						</Grid> */}
+					{/* </Grid> */}
 				</Grid>
+				<Footer />
 			</div>
 			{/* <Grid
 				item
