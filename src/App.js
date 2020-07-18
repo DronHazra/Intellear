@@ -19,6 +19,8 @@ import {
 	Paper,
 	Backdrop,
 	LinearProgress,
+	Container,
+	useMediaQuery,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { sequences } from '@magenta/music/node/core';
@@ -35,11 +37,29 @@ export const AppContext = React.createContext({
 	safari: window.webkitOfflineAudioContext ? true : false,
 });
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
+	hero: {
+		[theme.breakpoints.down('md')]: {
+			height: '50vh',
+		},
+		[theme.breakpoints.up('md')]: {
+			height: '85vh',
+		},
+		// width: '100vw',
+		backgroundImage: 'url(/piano.jpg)',
+		backgroundColor: theme.palette.background.paper,
+		backgroundPosition: 'center bottom',
+		backgroundSize: 'cover',
+		backgroundRepeat: 'no-repeat',
+		paddingTop: theme.spacing(10),
+	},
 	app: {
 		zIndex: '3',
 		position: 'relative',
-		marginTop: theme.spacing(-47),
+		marginTop: theme.spacing(-22),
+		flexGrow: 1,
+		maxWidth: '100vw',
+		padding: theme.spacing(5),
 	},
 	root: {
 		margin: 6,
@@ -70,18 +90,15 @@ const useStyles = makeStyles((theme) => ({
 	footer: {
 		marginBottom: theme.spacing(0),
 	},
-	grid: {
-		margin: theme.spacing(0),
-		flexGrow: 0,
-		maxWidth: `100%`,
-		flexBasis: `100%`,
-	},
 	scoreCard: {
 		borderRadius: theme.spacing(4),
 		padding: theme.spacing(2, 0),
 	},
-	scoreElement: {
-		margin: theme.spacing(-3, 0, -2),
+	// scoreElement: {
+	// 	margin: theme.spacing(-3, 0, -2),
+	// },
+	video: {
+		maxWidth: '100%',
 	},
 }));
 // const generateWorker = new GenerateWorker();
@@ -99,7 +116,7 @@ export default function App() {
 	const fadeLength = 750;
 	const classes = useStyles();
 	const [scoreSnack, setScoreSnack] = useState(false);
-	const scoreCallback = (n) => {
+	const scoreCallback = n => {
 		setScoreSnack(true);
 		setScore(n);
 	};
@@ -126,7 +143,7 @@ export default function App() {
 	// }, [score, scoreSnack]);
 	const generate = () => {
 		setGenerating(true);
-		instance.generate(temperature).then((sample) => {
+		instance.generate(temperature).then(sample => {
 			newSample(sequences.mergeConsecutiveNotes(sample));
 			setActiveStep(1);
 			setGenerating(false);
@@ -141,38 +158,26 @@ export default function App() {
 				recordingBroken: navigator.mediaDevices ? false : true,
 			}}
 		>
-			<Backdrop
-				open={navigator.userAgent.indexOf('iPhone OS 12_0') >= 0}
-				className={classes.backdrop}
-			>
-				<Grid
-					container
-					direction='column'
-					justify='center'
-					alignItems='center'
+			<div className='backdrops'>
+				<Backdrop
+					open={navigator.userAgent.indexOf('iPhone OS 12_0') >= 0}
+					className={classes.backdrop}
 				>
-					<Grid item>
+					<Container>
 						<Typography color='inherit'>
 							Because of some WebAudio issues, we can't get
 							Intellear to work on your iOS device :(. It works on
 							Android and desktop browsers, so we suggest using
 							another device. Sorry about that ;-;
 						</Typography>
-					</Grid>
-				</Grid>
-			</Backdrop>
-			<Backdrop
-				open={safari}
-				className={classes.backdrop}
-				onClick={() => (safari = false)}
-			>
-				<Grid
-					container
-					direction='column'
-					justify='center'
-					alignItems='center'
+					</Container>
+				</Backdrop>
+				<Backdrop
+					open={safari}
+					className={classes.backdrop}
+					onClick={() => (safari = false)}
 				>
-					<Grid item>
+					<Container>
 						<Typography color='inherit'>
 							It looks like you're using Safari! Unfortunately
 							because of a
@@ -182,282 +187,282 @@ export default function App() {
 							, transcription is significantly slower on Safari
 							than other browsers.
 						</Typography>
-					</Grid>
-				</Grid>
-			</Backdrop>
-			<Backdrop
-				open={navigator.userAgent.indexOf('iPhone OS 12_0') >= 0}
-				className={classes.backdrop}
-			>
-				<Grid
-					container
-					direction='column'
-					justify='center'
-					alignItems='center'
-				>
-					<Grid item>
-						<Typography color='inherit'>
-							Because of some WebAudio issues, we can't get
-							Intellear to work on your iOS device :(. It works on
-							Android and desktop browsers, so we suggest using
-							another device. Sorry about that ;-;
-						</Typography>
-					</Grid>
-				</Grid>
-			</Backdrop>
-			<MyHeader
+					</Container>
+				</Backdrop>
+			</div>
+			{/* <MyHeader
 				inHeader={fades.header}
 				inSubheader={fades.subheader}
 				timeout={fadeLength}
-			/>
-			<div className={classes.app}>
-				<Grid
-					container
-					direction='column'
-					spacing={10}
-					alignItems='center'
-					className={classes.grid}
-				>
-					<Grid item />
-					<Grid
-						item
-						container
-						direction='row'
-						alignItems='center'
-						justify='center'
+			/> */}
+			<div className={classes.hero}>
+				<Container maxWidth='md'>
+					<Fade
+						in={true}
+						timeout={fadeLength}
+						style={{ transitionDelay: fades.header }}
 					>
-						<Grid item xs={12} sm={10} md={9} lg={8}>
-							<TextCard
-								in={true}
-								timeout={fadeLength}
-								style={{ transitionDelay: fades.card }}
-								score={score}
-							/>
+						<Typography
+							component='h1'
+							variant='h2'
+							align='left'
+							color='secondary'
+							gutterBottom
+						>
+							Intellear
+						</Typography>
+					</Fade>
+					<Fade
+						in={true}
+						timeout={fadeLength}
+						style={{ transitionDelay: fades.subheader }}
+					>
+						<Typography
+							variant='h5'
+							align='left'
+							style={{ color: '#fff' }}
+						>
+							Level up your ear training.
+						</Typography>
+					</Fade>
+				</Container>
+			</div>
+			<div className={classes.app}>
+				<Container disableGutters>
+					<Grid
+						container
+						direction='column'
+						spacing={10}
+						// alignItems='center'
+						className={classes.grid}
+					>
+						<Grid item>
+							<Container maxWidth='md' disableGutters>
+								<TextCard
+									in={true}
+									timeout={fadeLength}
+									style={{ transitionDelay: fades.card }}
+									score={score}
+								/>
+							</Container>
 						</Grid>
-					</Grid>
 
-					<Grid item>
-						<Process
-							in={true}
-							timeout={fadeLength}
-							style={{ transitionDelay: fades.process }}
-						/>
-					</Grid>
+						<Grid item>
+							<Container maxWidth='md' disableGutters>
+								<Process
+									in={true}
+									timeout={fadeLength}
+									style={{ transitionDelay: fades.process }}
+								/>
+							</Container>
+						</Grid>
 
-					<Grid item container direction='row' justify='center'>
-						<Grid item xs={12} sm={10} md={9} lg={8}>
-							<Fade
-								in={true}
-								timeout={fadeLength}
-								style={{ transitionDelay: fades.dialog }}
-							>
-								<Card
-									variant='outlined'
-									className={classes.dialog}
+						<Grid item>
+							<Container maxWidth='md' disableGutters>
+								<Fade
+									in={true}
+									timeout={fadeLength}
+									style={{ transitionDelay: fades.dialog }}
 								>
-									<CardActionArea
-										onClick={handleExpansion}
-										className={classes.cardAction}
+									<Card
+										variant='outlined'
+										className={classes.dialog}
 									>
-										<Typography
-											color='primary'
-											variant='h1'
-											className={classes.cardHeading}
-										>
-											Making the music :)
-										</Typography>
-										<Divider />
-									</CardActionArea>
-									<Collapse
-										in={dialogExpanded}
-										timeout='auto'
-										unmountOnExit
-									>
-										<CardContent
-											className={classes.content}
-										>
-											<Grid
-												container
-												direction='row'
-												spacing={1}
-												alignItems='center'
-											>
-												<Grid item xs={2} lg={1}>
-													<Fade
-														in={true}
-														style={{
-															transitionDelay: sliderTimeout,
-														}}
-														timeout={fadeLength}
-													>
-														<Typography align='right'>
-															Tempo
-														</Typography>
-													</Fade>
-												</Grid>
-												<Grid
-													item
-													xs={10}
-													md={9}
-													lg={10}
-												>
-													<Fade
-														in={true}
-														style={{
-															transitionDelay: sliderTimeout,
-														}}
-														timeout={fadeLength}
-													>
-														<Slider
-															value={tempo}
-															onChange={(
-																e,
-																newValue
-															) =>
-																setTempo(
-																	newValue
-																)
-															}
-															valueLabelDisplay='auto'
-															min={50}
-															max={150}
-															color='secondary'
-														/>
-													</Fade>
-												</Grid>
-												<Grid item xs={false} md={1} />
-											</Grid>
-											<Grid
-												container
-												direction='row'
-												spacing={1}
-												alignItems='center'
-											>
-												<Grid item xs={2} lg={1}>
-													<Fade
-														in={true}
-														style={{
-															transitionDelay:
-																sliderTimeout +
-																400,
-														}}
-														timeout={fadeLength}
-													>
-														<Typography align='right'>
-															Difficulty
-														</Typography>
-													</Fade>
-												</Grid>
-												<Grid
-													item
-													xs={10}
-													md={9}
-													lg={10}
-												>
-													<Fade
-														in={true}
-														style={{
-															transitionDelay:
-																sliderTimeout +
-																400,
-														}}
-														timeout={fadeLength}
-													>
-														<Slider
-															value={temperature}
-															onChange={(
-																e,
-																newValue
-															) =>
-																setTemperature(
-																	newValue
-																)
-															}
-															valueLabelDisplay='off'
-															color='secondary'
-															min={0.5}
-															step={0.0001}
-															max={3}
-														/>
-													</Fade>
-												</Grid>
-												<Grid item xs={false} md={1} />
-											</Grid>
-											<div className='staffArea'></div>
-										</CardContent>
-										<Divider />
-									</Collapse>
-									<div className='placeholder'>
-										<Fade
-											in={isGenerating}
-											style={{
-												transitionDelay: isGenerating
-													? '800ms'
-													: '0ms',
-											}}
-											unmountOnExit
-										>
-											<LinearProgress color='secondary' />
-										</Fade>
-									</div>
-									<CardActions>
-										<Button
-											variant='outlined'
-											color='secondary'
-											size='large'
-											onClick={generate}
-											className={classes.generate}
-											fullWidth
-											disableElevation
-										>
-											Generate!
-										</Button>
-									</CardActions>
-								</Card>
-							</Fade>
-						</Grid>
-					</Grid>
-					{score ? (
-						<>
-							<Grid
-								item
-								container
-								direction='row'
-								alignItems='center'
-								justify='center'
-								className={classes.scoreElement}
-							>
-								<Grid item xs={4} sm={3} md={2}>
-									<Fade
-										in={score ? true : false}
-										timeout={fadeLength}
-									>
-										<Paper
-											className={classes.scoreCard}
-											variant='outlined'
+										<CardActionArea
+											onClick={handleExpansion}
+											className={classes.cardAction}
 										>
 											<Typography
-												className={classes.scoreText}
-												align='center'
+												color='primary'
+												variant='h1'
+												className={classes.cardHeading}
 											>
-												Your score is: {score}%!
+												Making the music :)
 											</Typography>
-										</Paper>
-									</Fade>
-								</Grid>
-							</Grid>
-						</>
-					) : (
-						''
-					)}
-					<Grid
-						item
-						container
-						direction='row'
-						alignItems='center'
-						justify='center'
-					>
-						<Grid item xs={12} sm={10} md={9} lg={8}>
+											<Divider />
+										</CardActionArea>
+										<Collapse
+											in={dialogExpanded}
+											timeout='auto'
+											unmountOnExit
+										>
+											<CardContent
+												className={classes.content}
+											>
+												<Grid
+													container
+													direction='row'
+													spacing={1}
+													alignItems='center'
+												>
+													<Grid item xs={2} lg={1}>
+														<Fade
+															in={true}
+															style={{
+																transitionDelay: sliderTimeout,
+															}}
+															timeout={fadeLength}
+														>
+															<Typography align='right'>
+																Tempo
+															</Typography>
+														</Fade>
+													</Grid>
+													<Grid
+														item
+														xs={10}
+														md={9}
+														lg={10}
+													>
+														<Fade
+															in={true}
+															style={{
+																transitionDelay: sliderTimeout,
+															}}
+															timeout={fadeLength}
+														>
+															<Slider
+																value={tempo}
+																onChange={(
+																	e,
+																	newValue
+																) =>
+																	setTempo(
+																		newValue
+																	)
+																}
+																valueLabelDisplay='auto'
+																min={50}
+																max={150}
+																color='secondary'
+															/>
+														</Fade>
+													</Grid>
+													<Grid
+														item
+														xs={false}
+														md={1}
+													/>
+												</Grid>
+												<Grid
+													container
+													direction='row'
+													spacing={1}
+													alignItems='center'
+												>
+													<Grid item xs={2} lg={1}>
+														<Fade
+															in={true}
+															style={{
+																transitionDelay:
+																	sliderTimeout +
+																	400,
+															}}
+															timeout={fadeLength}
+														>
+															<Typography align='right'>
+																Difficulty
+															</Typography>
+														</Fade>
+													</Grid>
+													<Grid
+														item
+														xs={10}
+														md={9}
+														lg={10}
+													>
+														<Fade
+															in={true}
+															style={{
+																transitionDelay:
+																	sliderTimeout +
+																	400,
+															}}
+															timeout={fadeLength}
+														>
+															<Slider
+																value={
+																	temperature
+																}
+																onChange={(
+																	e,
+																	newValue
+																) =>
+																	setTemperature(
+																		newValue
+																	)
+																}
+																valueLabelDisplay='off'
+																color='secondary'
+																min={0.5}
+																step={0.0001}
+																max={3}
+															/>
+														</Fade>
+													</Grid>
+													<Grid
+														item
+														xs={false}
+														md={1}
+													/>
+												</Grid>
+												<div className='staffArea'></div>
+											</CardContent>
+											<Divider />
+										</Collapse>
+										<div className='placeholder'>
+											<Fade
+												in={isGenerating}
+												style={{
+													transitionDelay: isGenerating
+														? '800ms'
+														: '0ms',
+												}}
+												unmountOnExit
+											>
+												<LinearProgress color='secondary' />
+											</Fade>
+										</div>
+										<CardActions>
+											<Button
+												variant='outlined'
+												color='secondary'
+												size='large'
+												onClick={generate}
+												className={classes.generate}
+												fullWidth
+												disableElevation
+											>
+												Generate!
+											</Button>
+										</CardActions>
+									</Card>
+								</Fade>
+							</Container>
+						</Grid>
+						{score ? (
+							<Container maxWidth='sm' disableGutters>
+								<Fade
+									in={score ? true : false}
+									timeout={fadeLength}
+								>
+									<Paper
+										className={classes.scoreCard}
+										variant='outlined'
+									>
+										<Typography
+											className={classes.scoreText}
+											align='center'
+										>
+											Your score is: {score}%!
+										</Typography>
+									</Paper>
+								</Fade>
+							</Container>
+						) : (
+							''
+						)}
+						<Container maxWidth='md' disableGutters>
 							<RecordPlayTranscribe
 								sequence={currentSample}
 								callback={scoreCallback}
@@ -465,15 +470,8 @@ export default function App() {
 								timeout={fadeLength}
 								delay={sliderTimeout + 800}
 							/>
-						</Grid>
-					</Grid>
-					<Grid
-						item
-						container
-						direction='column'
-						alignContent='center'
-					>
-						<Grid item>
+						</Container>
+						<Container maxWidth='sm' disableGutters>
 							<Fade
 								in={true}
 								timeout={fadeLength}
@@ -491,9 +489,8 @@ export default function App() {
 									allowFullScreen
 								/>
 							</Fade>
-						</Grid>
-					</Grid>
-					{/* <Grid
+						</Container>
+						{/* <Grid
 						item
 						container
 						direction='row'
@@ -514,13 +511,14 @@ export default function App() {
 								</SvgIcon>
 							</IconButton>
 						</Grid> */}
-					{/* <Grid item xs={4}>
+						{/* <Grid item xs={4}>
 							<Typography variant='body2' align='left'>
 								Powered by Magenta
 							</Typography>
 						</Grid> */}
-					{/* </Grid> */}
-				</Grid>
+						{/* </Grid> */}
+					</Grid>
+				</Container>
 				<Footer />
 			</div>
 			{/* <Grid

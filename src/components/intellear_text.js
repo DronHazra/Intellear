@@ -11,7 +11,7 @@ import {
 const useStyles = makeStyles((theme) => {
 	return {
 		root: {
-			background: theme.palette.background.default,
+			background: theme.palette.background.paper,
 		},
 	};
 });

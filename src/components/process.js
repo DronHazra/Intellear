@@ -1,5 +1,12 @@
 import React, { useContext } from 'react';
-import { Stepper, StepLabel, Step, makeStyles, Fade } from '@material-ui/core';
+import {
+	Stepper,
+	StepLabel,
+	Step,
+	makeStyles,
+	Fade,
+	useMediaQuery,
+} from '@material-ui/core';
 import { AppContext } from '../App';
 function getSteps() {
 	return [
@@ -23,6 +30,7 @@ export default function Process(props) {
 	const steps = getSteps();
 	const step = useContext(AppContext);
 	const classes = useStyles();
+	const matches = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 	return (
 		<Fade {...props}>
 			<Stepper
@@ -30,6 +38,7 @@ export default function Process(props) {
 				square={false}
 				variant='outlined'
 				className={classes.root}
+				orientation={matches ? 'vertical' : 'horizontal'}
 			>
 				{steps.map((label) => {
 					return (
