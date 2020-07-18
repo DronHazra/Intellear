@@ -1,4 +1,5 @@
 // from magenta docs
+/*eslint-disable*/
 importScripts(
 	'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.4.0/dist/tf.min.js'
 );
