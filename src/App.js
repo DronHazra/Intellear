@@ -20,12 +20,14 @@ import {
 	Backdrop,
 	LinearProgress,
 	Container,
+	Link,
 	useMediaQuery,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { sequences } from '@magenta/music/node/core';
 import TextCard from './components/intellear_text';
 import Process from './components/process';
+import Favorite from '@material-ui/icons/Favorite';
 //eslint-disable-next-line
 import worker from 'workerize-loader!./worker.js';
 import Footer from './material_kit_react/Footer/Footer';
@@ -35,31 +37,32 @@ export const AppContext = React.createContext({
 	changeStep: () => {},
 	recordingBroken: false,
 	safari: window.webkitOfflineAudioContext ? true : false,
+	mobile: false,
 });
 
 const useStyles = makeStyles(theme => ({
 	hero: {
 		[theme.breakpoints.down('md')]: {
 			height: '50vh',
+			paddingTop: theme.spacing(10),
 		},
 		[theme.breakpoints.up('md')]: {
 			height: '85vh',
+			paddingTop: theme.spacing(20),
 		},
-		// width: '100vw',
 		backgroundImage: 'url(/piano.jpg)',
 		backgroundColor: theme.palette.background.paper,
 		backgroundPosition: 'center bottom',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
-		paddingTop: theme.spacing(10),
 	},
 	app: {
-		zIndex: '3',
-		position: 'relative',
+		// zIndex: '3',
+		// position: 'relative',
 		marginTop: theme.spacing(-22),
 		flexGrow: 1,
 		maxWidth: '100vw',
-		padding: theme.spacing(5),
+		padding: 14,
 	},
 	root: {
 		margin: 6,
@@ -69,6 +72,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	backdrop: {
 		zIndex: theme.zIndex.drawer + 1,
+		maxWidth: '100vw',
 		color: '#fff',
 	},
 	cardHeading: {
@@ -88,7 +92,9 @@ const useStyles = makeStyles(theme => ({
 		},
 	},
 	footer: {
-		marginBottom: theme.spacing(0),
+		padding: theme.spacing(4),
+		backgroundColor: theme.palette.primary.main,
+		color: theme.palette.primary.contrastText,
 	},
 	scoreCard: {
 		borderRadius: theme.spacing(4),
@@ -100,10 +106,20 @@ const useStyles = makeStyles(theme => ({
 	video: {
 		maxWidth: '100%',
 	},
+	icon: {
+		width: '18px',
+		height: '18px',
+		position: 'relative',
+		top: '3px',
+	},
+	dialog: {
+		maxWidth: '100%',
+	},
 }));
 // const generateWorker = new GenerateWorker();
 
 export default function App() {
+	const mobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
 	const [temperature, setTemperature] = useState(1.0);
 	const [dialogExpanded, setExpanded] = useState(true);
 	const [score, setScore] = useState(null);
@@ -112,6 +128,7 @@ export default function App() {
 	const [genComplete, setGenComplete] = useState(false);
 	const [activeStep, setActiveStep] = useState(0);
 	let safari = window.webkitOfflineAudioContext ? true : false;
+
 	const sliderTimeout = 400;
 	const fadeLength = 750;
 	const classes = useStyles();
@@ -156,6 +173,7 @@ export default function App() {
 				step: activeStep,
 				changeStep: setActiveStep,
 				recordingBroken: navigator.mediaDevices ? false : true,
+				mobile: mobile,
 			}}
 		>
 			<div className='backdrops'>
@@ -190,307 +208,338 @@ export default function App() {
 					</Container>
 				</Backdrop>
 			</div>
-			{/* <MyHeader
+			<main>
+				{/* <MyHeader
 				inHeader={fades.header}
 				inSubheader={fades.subheader}
 				timeout={fadeLength}
 			/> */}
-			<div className={classes.hero}>
-				<Container maxWidth='md'>
-					<Fade
-						in={true}
-						timeout={fadeLength}
-						style={{ transitionDelay: fades.header }}
-					>
-						<Typography
-							component='h1'
-							variant='h2'
-							align='left'
-							color='secondary'
-							gutterBottom
+				<div className={classes.hero}>
+					<Container maxWidth='md'>
+						<Fade
+							in={true}
+							timeout={fadeLength}
+							style={{ transitionDelay: fades.header }}
 						>
-							Intellear
-						</Typography>
-					</Fade>
-					<Fade
-						in={true}
-						timeout={fadeLength}
-						style={{ transitionDelay: fades.subheader }}
-					>
-						<Typography
-							variant='h5'
-							align='left'
-							style={{ color: '#fff' }}
+							<Typography
+								component='h1'
+								variant='h2'
+								align='left'
+								color='secondary'
+								gutterBottom
+							>
+								Intellear
+							</Typography>
+						</Fade>
+						<Fade
+							in={true}
+							timeout={fadeLength}
+							style={{ transitionDelay: fades.subheader }}
 						>
-							Level up your ear training.
-						</Typography>
-					</Fade>
-				</Container>
-			</div>
-			<div className={classes.app}>
-				<Container disableGutters>
-					<Grid
-						container
-						direction='column'
-						spacing={10}
-						// alignItems='center'
-						className={classes.grid}
-					>
-						<Grid item>
-							<Container maxWidth='md' disableGutters>
-								<TextCard
-									in={true}
-									timeout={fadeLength}
-									style={{ transitionDelay: fades.card }}
-									score={score}
-								/>
-							</Container>
-						</Grid>
+							<Typography
+								variant='h5'
+								align='left'
+								style={{ color: '#fff' }}
+							>
+								Level up your ear training.
+							</Typography>
+						</Fade>
+					</Container>
+				</div>
+				<div className={classes.app}>
+					<Container disableGutters>
+						<Grid
+							container
+							direction='column'
+							spacing={7}
+							// alignItems='center'
+							className={classes.grid}
+						>
+							<Grid item>
+								<Container maxWidth='md' disableGutters>
+									<TextCard
+										in={true}
+										timeout={fadeLength}
+										style={{ transitionDelay: fades.card }}
+										score={score}
+									/>
+								</Container>
+							</Grid>
 
-						<Grid item>
-							<Container maxWidth='md' disableGutters>
-								<Process
-									in={true}
-									timeout={fadeLength}
-									style={{ transitionDelay: fades.process }}
-								/>
-							</Container>
-						</Grid>
+							<Grid item>
+								<Container maxWidth='md' disableGutters>
+									<Process
+										in={true}
+										timeout={fadeLength}
+										style={{
+											transitionDelay: fades.process,
+										}}
+									/>
+								</Container>
+							</Grid>
 
-						<Grid item>
-							<Container maxWidth='md' disableGutters>
-								<Fade
-									in={true}
-									timeout={fadeLength}
-									style={{ transitionDelay: fades.dialog }}
-								>
-									<Card
-										variant='outlined'
-										className={classes.dialog}
+							<Grid item>
+								<Container maxWidth='md' disableGutters>
+									<Fade
+										in={true}
+										timeout={fadeLength}
+										style={{
+											transitionDelay: fades.dialog,
+										}}
 									>
-										<CardActionArea
-											onClick={handleExpansion}
-											className={classes.cardAction}
+										<Card
+											variant='outlined'
+											className={classes.dialog}
 										>
-											<Typography
-												color='primary'
-												variant='h1'
-												className={classes.cardHeading}
+											<CardActionArea
+												onClick={handleExpansion}
+												className={classes.cardAction}
 											>
-												Making the music :)
-											</Typography>
-											<Divider />
-										</CardActionArea>
-										<Collapse
-											in={dialogExpanded}
-											timeout='auto'
-											unmountOnExit
-										>
-											<CardContent
-												className={classes.content}
-											>
-												<Grid
-													container
-													direction='row'
-													spacing={1}
-													alignItems='center'
+												<Typography
+													color='primary'
+													variant='h1'
+													className={
+														classes.cardHeading
+													}
 												>
-													<Grid item xs={2} lg={1}>
-														<Fade
-															in={true}
-															style={{
-																transitionDelay: sliderTimeout,
-															}}
-															timeout={fadeLength}
-														>
-															<Typography align='right'>
-																Tempo
-															</Typography>
-														</Fade>
-													</Grid>
-													<Grid
-														item
-														xs={10}
-														md={9}
-														lg={10}
-													>
-														<Fade
-															in={true}
-															style={{
-																transitionDelay: sliderTimeout,
-															}}
-															timeout={fadeLength}
-														>
-															<Slider
-																value={tempo}
-																onChange={(
-																	e,
-																	newValue
-																) =>
-																	setTempo(
-																		newValue
-																	)
-																}
-																valueLabelDisplay='auto'
-																min={50}
-																max={150}
-																color='secondary'
-															/>
-														</Fade>
-													</Grid>
-													<Grid
-														item
-														xs={false}
-														md={1}
-													/>
-												</Grid>
-												<Grid
-													container
-													direction='row'
-													spacing={1}
-													alignItems='center'
-												>
-													<Grid item xs={2} lg={1}>
-														<Fade
-															in={true}
-															style={{
-																transitionDelay:
-																	sliderTimeout +
-																	400,
-															}}
-															timeout={fadeLength}
-														>
-															<Typography align='right'>
-																Difficulty
-															</Typography>
-														</Fade>
-													</Grid>
-													<Grid
-														item
-														xs={10}
-														md={9}
-														lg={10}
-													>
-														<Fade
-															in={true}
-															style={{
-																transitionDelay:
-																	sliderTimeout +
-																	400,
-															}}
-															timeout={fadeLength}
-														>
-															<Slider
-																value={
-																	temperature
-																}
-																onChange={(
-																	e,
-																	newValue
-																) =>
-																	setTemperature(
-																		newValue
-																	)
-																}
-																valueLabelDisplay='off'
-																color='secondary'
-																min={0.5}
-																step={0.0001}
-																max={3}
-															/>
-														</Fade>
-													</Grid>
-													<Grid
-														item
-														xs={false}
-														md={1}
-													/>
-												</Grid>
-												<div className='staffArea'></div>
-											</CardContent>
-											<Divider />
-										</Collapse>
-										<div className='placeholder'>
-											<Fade
-												in={isGenerating}
-												style={{
-													transitionDelay: isGenerating
-														? '800ms'
-														: '0ms',
-												}}
+													Making the music :)
+												</Typography>
+												<Divider />
+											</CardActionArea>
+											<Collapse
+												in={dialogExpanded}
+												timeout='auto'
 												unmountOnExit
 											>
-												<LinearProgress color='secondary' />
-											</Fade>
-										</div>
-										<CardActions>
-											<Button
-												variant='outlined'
-												color='secondary'
-												size='large'
-												onClick={generate}
-												className={classes.generate}
-												fullWidth
-												disableElevation
-											>
-												Generate!
-											</Button>
-										</CardActions>
-									</Card>
-								</Fade>
-							</Container>
-						</Grid>
-						{score ? (
-							<Container maxWidth='sm' disableGutters>
-								<Fade
-									in={score ? true : false}
-									timeout={fadeLength}
-								>
-									<Paper
-										className={classes.scoreCard}
-										variant='outlined'
+												<CardContent
+													className={classes.content}
+												>
+													<Grid
+														container
+														direction='row'
+														spacing={1}
+														alignItems='center'
+													>
+														<Grid
+															item
+															xs={2}
+															lg={1}
+														>
+															<Fade
+																in={true}
+																style={{
+																	transitionDelay: sliderTimeout,
+																}}
+																timeout={
+																	fadeLength
+																}
+															>
+																<Typography align='right'>
+																	Tempo
+																</Typography>
+															</Fade>
+														</Grid>
+														<Grid
+															item
+															xs={10}
+															md={9}
+															lg={10}
+														>
+															<Fade
+																in={true}
+																style={{
+																	transitionDelay: sliderTimeout,
+																}}
+																timeout={
+																	fadeLength
+																}
+															>
+																<Slider
+																	value={
+																		tempo
+																	}
+																	onChange={(
+																		e,
+																		newValue
+																	) =>
+																		setTempo(
+																			newValue
+																		)
+																	}
+																	valueLabelDisplay='auto'
+																	min={50}
+																	max={150}
+																	color='secondary'
+																/>
+															</Fade>
+														</Grid>
+														<Grid
+															item
+															xs={false}
+															md={1}
+														/>
+													</Grid>
+													<Grid
+														container
+														direction='row'
+														spacing={1}
+														alignItems='center'
+													>
+														<Grid
+															item
+															xs={2}
+															lg={1}
+														>
+															<Fade
+																in={true}
+																style={{
+																	transitionDelay:
+																		sliderTimeout +
+																		400,
+																}}
+																timeout={
+																	fadeLength
+																}
+															>
+																<Typography align='right'>
+																	Difficulty
+																</Typography>
+															</Fade>
+														</Grid>
+														<Grid
+															item
+															xs={10}
+															md={9}
+															lg={10}
+														>
+															<Fade
+																in={true}
+																style={{
+																	transitionDelay:
+																		sliderTimeout +
+																		400,
+																}}
+																timeout={
+																	fadeLength
+																}
+															>
+																<Slider
+																	value={
+																		temperature
+																	}
+																	onChange={(
+																		e,
+																		newValue
+																	) =>
+																		setTemperature(
+																			newValue
+																		)
+																	}
+																	valueLabelDisplay='off'
+																	color='secondary'
+																	min={0.5}
+																	step={
+																		0.0001
+																	}
+																	max={3}
+																/>
+															</Fade>
+														</Grid>
+														<Grid
+															item
+															xs={false}
+															md={1}
+														/>
+													</Grid>
+													<div className='staffArea'></div>
+												</CardContent>
+												<Divider />
+											</Collapse>
+											<div className='placeholder'>
+												<Fade
+													in={isGenerating}
+													style={{
+														transitionDelay: isGenerating
+															? '800ms'
+															: '0ms',
+													}}
+													unmountOnExit
+												>
+													<LinearProgress color='secondary' />
+												</Fade>
+											</div>
+											<CardActions>
+												<Button
+													variant='outlined'
+													color='secondary'
+													size='large'
+													onClick={generate}
+													className={classes.generate}
+													fullWidth
+													disableElevation
+												>
+													Generate!
+												</Button>
+											</CardActions>
+										</Card>
+									</Fade>
+								</Container>
+							</Grid>
+							{score ? (
+								<Container maxWidth='sm' disableGutters>
+									<Fade
+										in={score ? true : false}
+										timeout={fadeLength}
 									>
-										<Typography
-											className={classes.scoreText}
-											align='center'
+										<Paper
+											className={classes.scoreCard}
+											variant='outlined'
 										>
-											Your score is: {score}%!
-										</Typography>
-									</Paper>
-								</Fade>
-							</Container>
-						) : (
-							''
-						)}
-						<Container maxWidth='md' disableGutters>
-							<RecordPlayTranscribe
-								sequence={currentSample}
-								callback={scoreCallback}
-								tempo={tempo}
-								timeout={fadeLength}
-								delay={sliderTimeout + 800}
-							/>
-						</Container>
-						<Container maxWidth='sm' disableGutters>
-							<Fade
-								in={true}
-								timeout={fadeLength}
-								style={{ transitionDelay: fades.video }}
-							>
-								<iframe
-									className={classes.video}
-									title='intellear-vid'
-									width='560'
-									height='315'
-									src='https://www.youtube-nocookie.com/embed/wnxTqxL7pBQ'
-									allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'
-									scrolling='auto'
-									frameBorder='0'
-									allowFullScreen
-								/>
-							</Fade>
-						</Container>
-						{/* <Grid
+											<Typography
+												className={classes.scoreText}
+												align='center'
+											>
+												Your score is: {score}%!
+											</Typography>
+										</Paper>
+									</Fade>
+								</Container>
+							) : (
+								''
+							)}
+							<Grid item>
+								<Container maxWidth='md' disableGutters>
+									<RecordPlayTranscribe
+										sequence={currentSample}
+										callback={scoreCallback}
+										tempo={tempo}
+										timeout={fadeLength}
+										delay={sliderTimeout + 800}
+									/>
+								</Container>
+							</Grid>
+							<Grid item>
+								<Container maxWidth='sm' disableGutters>
+									<Fade
+										in={true}
+										timeout={fadeLength}
+										style={{ transitionDelay: fades.video }}
+									>
+										<iframe
+											className={classes.video}
+											title='intellear-vid'
+											width='560'
+											height='315'
+											src='https://www.youtube-nocookie.com/embed/wnxTqxL7pBQ'
+											allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'
+											scrolling='auto'
+											frameBorder='0'
+											allowFullScreen
+										/>
+									</Fade>
+								</Container>
+							</Grid>
+							{/* <Grid
 						item
 						container
 						direction='row'
@@ -511,16 +560,39 @@ export default function App() {
 								</SvgIcon>
 							</IconButton>
 						</Grid> */}
-						{/* <Grid item xs={4}>
+							{/* <Grid item xs={4}>
 							<Typography variant='body2' align='left'>
 								Powered by Magenta
 							</Typography>
 						</Grid> */}
-						{/* </Grid> */}
-					</Grid>
-				</Container>
-				<Footer />
-			</div>
+							{/* </Grid> */}
+						</Grid>
+					</Container>
+				</div>
+			</main>
+			<footer className={classes.footer}>
+				<Typography variant='h6' align='center' gutterBottom>
+					Powered w/ <Favorite className={classes.icon} /> by{' '}
+					<a
+						href='https://magenta.tensorflow.org/'
+						style={{ color: '#D2338F' }}
+					>
+						Google Magenta
+					</a>
+					.
+				</Typography>
+				<Typography variant='body2' align='center'>
+					{'Copyright © '}
+					<Link
+						color='inherit'
+						href='https://github.com/DronHazra/Intellear'
+					>
+						Intellear
+					</Link>{' '}
+					{new Date().getFullYear()}
+					{'.'}
+				</Typography>
+			</footer>
 			{/* <Grid
 				item
 				container

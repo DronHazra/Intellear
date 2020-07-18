@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Button from '@material-ui/core/Button';
+import { Button } from '@material-ui/core';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { AppContext } from '../App';
 import { useContext } from 'react';
@@ -8,6 +8,8 @@ export default function PlayRecordingButton(props) {
 	const step = useContext(AppContext);
 	const [playing, toggle] = useState(false);
 	const [player, setPlayer] = useState(new Audio(props.url));
+	const mobile = step.mobile;
+
 	const handleClick = () => {
 		if (playing) {
 			player.pause();
@@ -33,7 +35,7 @@ export default function PlayRecordingButton(props) {
 			startIcon={<PlayArrowIcon />}
 			disabled={props.disabled}
 		>
-			Play
+			{mobile ? '' : 'Play'}
 		</Button>
 	);
 }

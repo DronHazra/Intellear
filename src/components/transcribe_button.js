@@ -10,6 +10,7 @@ export default function TranscribeButton(props) {
 		'https://storage.googleapis.com/magentadata/js/checkpoints/transcription/onsets_frames_uni'
 	);
 	const step = useContext(AppContext);
+	const mobile = step.mobile;
 
 	const { url, sequence, sequenceCallback, ...others } = props;
 	const handleClick = async () => {
@@ -56,7 +57,7 @@ export default function TranscribeButton(props) {
 			onClick={handleClick}
 			disabled={step.step !== 4}
 		>
-			Score
+			{mobile ? '' : 'Score'}
 		</Button>
 	);
 }

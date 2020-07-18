@@ -11,7 +11,7 @@ import PlayRecordingButton from './play_recording_button';
 import { ReactMic } from 'react-mic';
 import { makeStyles } from '@material-ui/styles';
 import TranscribeButton from './transcribe_button';
-import { Fade, Snackbar } from '@material-ui/core';
+import { Fade, Snackbar, Container } from '@material-ui/core';
 import notes from '../notes';
 import { Alert } from '@material-ui/lab';
 
@@ -28,6 +28,7 @@ export default function RecordPlayTranscribe(props) {
 	const [open, setOpen] = useState(false);
 	const [recording, setRecord] = useState(false);
 	const step = useContext(AppContext);
+	const mobile = step.mobile;
 
 	const toggleRecord = () => {
 		if (step.recordingBroken) {
@@ -51,86 +52,80 @@ export default function RecordPlayTranscribe(props) {
 		}
 	}, []);*/
 
-	const handleStop = (recordedBlob) => {
+	const handleStop = recordedBlob => {
 		setAudioURL(URL.createObjectURL(recordedBlob.blob));
 	};
 	return (
 		<>
-			<Grid
-				container
-				direction='row'
-				alignItems='center'
-				justify='center'
-			>
-				<Grid item xs={12}>
-					<Fade
-						in={true}
-						timeout={props.timeout}
-						style={{ transitionDelay: props.delay }}
+			<Container>
+				<Fade
+					in={true}
+					timeout={props.timeout}
+					style={{ transitionDelay: props.delay }}
+				>
+					<ButtonGroup
+						color='primary'
+						variant='contained'
+						fullWidth
+						disableElevation
+						style={{ maxWidth: '100vw' }}
 					>
-						<ButtonGroup
-							color='secondary'
-							variant='contained'
-							fullWidth
-							disableElevation
+						<PlayButtton
+							sequence={props.sequence}
+							disabled={step.step !== 1 && step.step !== 2}
+							tempo={props.tempo}
+						/>
+						<Button
+							startIcon={
+								recording ? (
+									<StopIcon />
+								) : (
+									<FiberManualRecordIcon />
+								)
+							}
+							onClick={toggleRecord}
+							disabled={step.step !== 2}
 						>
-							<PlayButtton
-								sequence={props.sequence}
-								disabled={step.step !== 1 && step.step !== 2}
-								tempo={props.tempo}
-							/>
-							<Button
-								startIcon={
-									recording ? (
-										<StopIcon />
-									) : (
-										<FiberManualRecordIcon />
-									)
-								}
-								onClick={toggleRecord}
-								disabled={step.step !== 2}
-							>
-								Record
-							</Button>
-							<PlayRecordingButton
-								url={audioURL}
-								disabled={step.step < 3}
-							/>
-							<TranscribeButton
-								url={audioURL}
-								sequence={props.sequence}
-								sequenceCallback={props.callback}
-							/>
-						</ButtonGroup>
-					</Fade>
-				</Grid>
-				<Grid item>
-					<Fade
-						in={props.sequence ? true : false}
-						timeout={props.timeout}
-					>
-						<Typography align='left'>
-							<strong>First note: </strong>
+							{mobile ? '' : 'Record'}
+						</Button>
+						<PlayRecordingButton
+							url={audioURL}
+							disabled={step.step < 3}
+						/>
+						<TranscribeButton
+							url={audioURL}
+							sequence={props.sequence}
+							sequenceCallback={props.callback}
+						/>
+					</ButtonGroup>
+				</Fade>
+			</Container>
+			<Container>
+				<Fade
+					in={props.sequence ? true : false}
+					timeout={props.timeout}
+				>
+					<Typography align='left'>
+						<strong>First note: </strong>
 
-							{props.sequence
-								? notes[props.sequence.notes[0].pitch]
-								: ''}
-						</Typography>
-					</Fade>
-				</Grid>
-				<Grid item xs='auto'>
-					<ReactMic
-						record={recording}
-						onStop={handleStop}
-						channelCount={1}
-						className={classes.root}
-						strokeColor={'#00e5ff'}
-						backgroundColor={'#fafafa'}
-						echoCancellation
-						noiseSuppression
-					/>
-				</Grid>
-			</Grid>
+						{props.sequence
+							? notes[props.sequence.notes[0].pitch]
+							: ''}
+					</Typography>
+				</Fade>
+			</Container>
+			<Container>
+				<ReactMic
+					record={recording}
+					onStop={handleStop}
+					channelCount={1}
+					className={classes.root}
+					strokeColor={'#00e5ff'}
+					backgroundColor={'#fafafa'}
+					echoCancellation
+					noiseSuppression
+				/>
+			</Container>
 			<Snackbar
 				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
 				open={open}

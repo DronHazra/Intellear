@@ -18,7 +18,6 @@
 		"react-mic": "^12.4.6",
 		"react-player": "^2.1.0",
 		"react-scripts": "3.4.1",
-		"react-youtube": "^7.11.2",
 		"typeface-roboto": "0.0.75"
 	},
 	"scripts": {

@@ -12,6 +12,7 @@ export default function PlayButton(props) {
 			'https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus'
 		)
 	);
+	const mobile = step.mobile;
 
 	const play = () => {
 		step.changeStep(2);
@@ -25,7 +26,7 @@ export default function PlayButton(props) {
 			startIcon={<HearingIcon />}
 			disabled={props.disabled}
 		>
-			Listen
+			{mobile ? '' : 'Listen'}
 		</Button>
 	);
 }
