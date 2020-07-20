@@ -3,12 +3,11 @@ import {
 	Card,
 	Fade,
 	CardContent,
-	Grid,
 	Typography,
 	makeStyles,
 } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => {
+const useStyles = makeStyles(theme => {
 	return {
 		root: {
 			background: theme.palette.background.paper,
@@ -22,11 +21,6 @@ export default function TextCard(props) {
 		<Fade {...fadeProps}>
 			<Card elevation={3} className={classes.root}>
 				<CardContent>
-					<Grid container direction='column' alignItems='center'>
-						<Grid item>
-							{/* <div className='staffArea'></div> */}
-						</Grid>
-					</Grid>
 					<Typography align='justify'>
 						Welcome to Intellear! To start, click{' '}
 						<strong>Generate</strong> and <strong>Listen</strong> to

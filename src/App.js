@@ -53,17 +53,16 @@ const useStyles = makeStyles(theme => ({
 		backgroundPosition: 'center bottom',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
+		marginRight: theme.spacing(-2),
 	},
 	app: {
 		// zIndex: '3',
 		// position: 'relative',
 		marginTop: theme.spacing(-22),
+		marginRight: 0,
 		flexGrow: 1,
-		maxWidth: '100vw',
+		// maxWidth: '100vw',
 		padding: 14,
-	},
-	root: {
-		margin: 6,
 	},
 	scoreText: {
 		fontSize: '1.1rem',
@@ -77,9 +76,6 @@ const useStyles = makeStyles(theme => ({
 		margin: theme.spacing(2.5, 4),
 		fontSize: 20,
 	},
-	content: {
-		margin: theme.spacing(1, 0),
-	},
 	generate: {
 		transition: theme.transitions.duration.standard,
 		border: `1px solid ${theme.palette.secondary.main}`,
@@ -91,8 +87,9 @@ const useStyles = makeStyles(theme => ({
 	},
 	footer: {
 		padding: theme.spacing(4),
-		backgroundColor: theme.palette.primary.main,
+		backgroundColor: theme.palette.primary.dark,
 		color: theme.palette.primary.contrastText,
+		marginRight: theme.spacing(-2),
 	},
 	scoreCard: {
 		borderRadius: theme.spacing(4),
@@ -111,7 +108,9 @@ const useStyles = makeStyles(theme => ({
 		top: '3px',
 	},
 	dialog: {
-		maxWidth: '100%',
+		[theme.breakpoints.down('sm')]: {
+			minWidth: '90vw',
+		},
 	},
 }));
 // const generateWorker = new GenerateWorker();
@@ -207,11 +206,6 @@ export default function App() {
 				</Backdrop>
 			</div>
 			<main>
-				{/* <MyHeader
-				inHeader={fades.header}
-				inSubheader={fades.subheader}
-				timeout={fadeLength}
-			/> */}
 				<div className={classes.hero}>
 					<Container maxWidth='md'>
 						<Fade
@@ -245,327 +239,278 @@ export default function App() {
 					</Container>
 				</div>
 				<div className={classes.app}>
-					<Container disableGutters>
-						<Grid
-							container
-							direction='column'
-							spacing={7}
-							// alignItems='center'
-							className={classes.grid}
-						>
-							<Grid item>
-								<Container maxWidth='md' disableGutters>
-									<TextCard
-										in={true}
-										timeout={fadeLength}
-										style={{ transitionDelay: fades.card }}
-										score={score}
-									/>
-								</Container>
-							</Grid>
+					<Grid
+						container
+						direction='column'
+						spacing={7}
+						className={classes.grid}
+					>
+						<Grid item>
+							<Container maxWidth='md' disableGutters>
+								<TextCard
+									in={true}
+									timeout={fadeLength}
+									style={{ transitionDelay: fades.card }}
+									score={score}
+								/>
+							</Container>
+						</Grid>
 
-							<Grid item>
-								<Container maxWidth='md' disableGutters>
-									<Process
-										in={true}
-										timeout={fadeLength}
-										style={{
-											transitionDelay: fades.process,
-										}}
-									/>
-								</Container>
-							</Grid>
+						<Grid item>
+							<Container maxWidth='md' disableGutters>
+								<Process
+									in={true}
+									timeout={fadeLength}
+									style={{
+										transitionDelay: fades.process,
+									}}
+								/>
+							</Container>
+						</Grid>
 
-							<Grid item>
-								<Container maxWidth='md' disableGutters>
-									<Fade
-										in={true}
-										timeout={fadeLength}
-										style={{
-											transitionDelay: fades.dialog,
-										}}
-									>
-										<Card
-											variant='outlined'
-											className={classes.dialog}
-										>
-											<CardActionArea
-												onClick={handleExpansion}
-												className={classes.cardAction}
-											>
-												<Typography
-													color='primary'
-													variant='h1'
-													className={
-														classes.cardHeading
-													}
-												>
-													Making the music :)
-												</Typography>
-												<Divider />
-											</CardActionArea>
-											<Collapse
-												in={dialogExpanded}
-												timeout='auto'
-												unmountOnExit
-											>
-												<CardContent
-													className={classes.content}
-												>
-													<Grid
-														container
-														direction='row'
-														spacing={1}
-														alignItems='center'
-													>
-														<Grid
-															item
-															xs={2}
-															lg={1}
-														>
-															<Fade
-																in={true}
-																style={{
-																	transitionDelay: sliderTimeout,
-																}}
-																timeout={
-																	fadeLength
-																}
-															>
-																<Typography align='right'>
-																	Tempo
-																</Typography>
-															</Fade>
-														</Grid>
-														<Grid
-															item
-															xs={10}
-															md={9}
-															lg={10}
-														>
-															<Fade
-																in={true}
-																style={{
-																	transitionDelay: sliderTimeout,
-																}}
-																timeout={
-																	fadeLength
-																}
-															>
-																<Slider
-																	value={
-																		tempo
-																	}
-																	onChange={(
-																		e,
-																		newValue
-																	) =>
-																		setTempo(
-																			newValue
-																		)
-																	}
-																	valueLabelDisplay='auto'
-																	min={50}
-																	max={150}
-																	color='secondary'
-																/>
-															</Fade>
-														</Grid>
-														<Grid
-															item
-															xs={false}
-															md={1}
-														/>
-													</Grid>
-													<Grid
-														container
-														direction='row'
-														spacing={1}
-														alignItems='center'
-													>
-														<Grid
-															item
-															xs={2}
-															lg={1}
-														>
-															<Fade
-																in={true}
-																style={{
-																	transitionDelay:
-																		sliderTimeout +
-																		400,
-																}}
-																timeout={
-																	fadeLength
-																}
-															>
-																<Typography align='right'>
-																	Difficulty
-																</Typography>
-															</Fade>
-														</Grid>
-														<Grid
-															item
-															xs={10}
-															md={9}
-															lg={10}
-														>
-															<Fade
-																in={true}
-																style={{
-																	transitionDelay:
-																		sliderTimeout +
-																		400,
-																}}
-																timeout={
-																	fadeLength
-																}
-															>
-																<Slider
-																	value={
-																		temperature
-																	}
-																	onChange={(
-																		e,
-																		newValue
-																	) =>
-																		setTemperature(
-																			newValue
-																		)
-																	}
-																	valueLabelDisplay='off'
-																	color='secondary'
-																	min={0.5}
-																	step={
-																		0.0001
-																	}
-																	max={3}
-																/>
-															</Fade>
-														</Grid>
-														<Grid
-															item
-															xs={false}
-															md={1}
-														/>
-													</Grid>
-													<div className='staffArea'></div>
-												</CardContent>
-												<Divider />
-											</Collapse>
-											<div className='placeholder'>
-												<Fade
-													in={isGenerating}
-													style={{
-														transitionDelay: isGenerating
-															? '800ms'
-															: '0ms',
-													}}
-													unmountOnExit
-												>
-													<LinearProgress color='secondary' />
-												</Fade>
-											</div>
-											<CardActions>
-												<Button
-													variant='outlined'
-													color='secondary'
-													size='large'
-													onClick={generate}
-													className={classes.generate}
-													fullWidth
-													disableElevation
-												>
-													Generate!
-												</Button>
-											</CardActions>
-										</Card>
-									</Fade>
-								</Container>
-							</Grid>
-							{score ? (
-								<Container maxWidth='sm' disableGutters>
-									<Fade
-										in={score ? true : false}
-										timeout={fadeLength}
-									>
-										<Paper
-											className={classes.scoreCard}
-											variant='outlined'
+						<Grid item>
+							<Container
+								maxWidth='md'
+								className={classes.dialog}
+								disableGutters
+							>
+								<Fade
+									in={true}
+									timeout={fadeLength}
+									style={{
+										transitionDelay: fades.dialog,
+									}}
+								>
+									<Card variant='outlined'>
+										<CardActionArea
+											onClick={handleExpansion}
+											className={classes.cardAction}
 										>
 											<Typography
-												className={classes.scoreText}
-												align='center'
+												color='primary'
+												variant='h1'
+												className={classes.cardHeading}
 											>
-												Your score is: {score}%!
+												Making the music :)
 											</Typography>
-										</Paper>
-									</Fade>
-								</Container>
-							) : (
-								''
-							)}
-							<Grid item>
-								<Container maxWidth='md' disableGutters>
-									<RecordPlayTranscribe
-										sequence={currentSample}
-										callback={scoreCallback}
-										tempo={tempo}
-										timeout={fadeLength}
-										delay={sliderTimeout + 800}
-									/>
-								</Container>
-							</Grid>
-							<Grid item>
-								<Container maxWidth='sm' disableGutters>
-									<Fade
-										in={true}
-										timeout={fadeLength}
-										style={{ transitionDelay: fades.video }}
+											<Divider />
+										</CardActionArea>
+										<Collapse
+											in={dialogExpanded}
+											timeout='auto'
+											unmountOnExit
+										>
+											<CardContent>
+												<Grid
+													container
+													direction='row'
+													spacing={1}
+													alignItems='center'
+												>
+													<Grid item xs={2} lg={1}>
+														<Fade
+															in={true}
+															style={{
+																transitionDelay: sliderTimeout,
+															}}
+															timeout={fadeLength}
+														>
+															<Typography align='right'>
+																Tempo
+															</Typography>
+														</Fade>
+													</Grid>
+													<Grid
+														item
+														xs={10}
+														md={9}
+														lg={10}
+													>
+														<Fade
+															in={true}
+															style={{
+																transitionDelay: sliderTimeout,
+															}}
+															timeout={fadeLength}
+														>
+															<Slider
+																value={tempo}
+																onChange={(
+																	e,
+																	newValue
+																) =>
+																	setTempo(
+																		newValue
+																	)
+																}
+																valueLabelDisplay='auto'
+																min={50}
+																max={150}
+																color='primary'
+															/>
+														</Fade>
+													</Grid>
+													<Grid
+														item
+														xs={false}
+														md={1}
+													/>
+												</Grid>
+												<Grid
+													container
+													direction='row'
+													spacing={1}
+													alignItems='center'
+												>
+													<Grid item xs={2} lg={1}>
+														<Fade
+															in={true}
+															style={{
+																transitionDelay:
+																	sliderTimeout +
+																	400,
+															}}
+															timeout={fadeLength}
+														>
+															<Typography align='right'>
+																Difficulty
+															</Typography>
+														</Fade>
+													</Grid>
+													<Grid
+														item
+														xs={10}
+														md={9}
+														lg={10}
+													>
+														<Fade
+															in={true}
+															style={{
+																transitionDelay:
+																	sliderTimeout +
+																	400,
+															}}
+															timeout={fadeLength}
+														>
+															<Slider
+																value={
+																	temperature
+																}
+																onChange={(
+																	e,
+																	newValue
+																) =>
+																	setTemperature(
+																		newValue
+																	)
+																}
+																valueLabelDisplay='off'
+																color='primary'
+																min={0.5}
+																step={0.0001}
+																max={3}
+															/>
+														</Fade>
+													</Grid>
+													<Grid
+														item
+														xs={false}
+														md={1}
+													/>
+												</Grid>
+												<Container
+													maxWidth='sm'
+													style={{ overflow: 'auto' }}
+												>
+													<div className='staffArea'></div>
+												</Container>
+											</CardContent>
+											<Divider />
+										</Collapse>
+										<div className='placeholder'>
+											<Fade
+												in={isGenerating}
+												style={{
+													transitionDelay: isGenerating
+														? '800ms'
+														: '0ms',
+												}}
+												unmountOnExit
+											>
+												<LinearProgress color='secondary' />
+											</Fade>
+										</div>
+										<CardActions>
+											<Button
+												variant='outlined'
+												color='secondary'
+												size='large'
+												onClick={generate}
+												className={classes.generate}
+												fullWidth
+												disableElevation
+											>
+												Generate!
+											</Button>
+										</CardActions>
+									</Card>
+								</Fade>
+							</Container>
+						</Grid>
+						<Grid item>
+							<Container maxWidth='sm' disableGutters>
+								<Fade
+									in={score ? true : false}
+									timeout={fadeLength}
+									unmountOnExit
+								>
+									<Paper
+										className={classes.scoreCard}
+										variant='outlined'
 									>
-										<iframe
-											className={classes.video}
-											title='intellear-vid'
-											width='560'
-											height='315'
-											src='https://www.youtube-nocookie.com/embed/wnxTqxL7pBQ'
-											allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'
-											scrolling='auto'
-											frameBorder='0'
-											allowFullScreen
-										/>
-									</Fade>
-								</Container>
-							</Grid>
-							{/* <Grid
-						item
-						container
-						direction='row'
-						justify='center'
-						alignItems='center'
-						className={classes.footer}
-					>
-						<Grid item xs={4}>
-							<Typography variant='body2' align='right'>
-								Intellear
-							</Typography>
+										<Typography
+											className={classes.scoreText}
+											align='center'
+										>
+											Your score is: {score}%!
+										</Typography>
+									</Paper>
+								</Fade>
+							</Container>
 						</Grid>
-						<Grid item xs={1} />
-						{/* <Grid item>
-							<IconButton href='https://github.com/DronHazra/Intellear/issues'>
-								<SvgIcon>
-									<GithubLogo />
-								</SvgIcon>
-							</IconButton>
-						</Grid> */}
-							{/* <Grid item xs={4}>
-							<Typography variant='body2' align='left'>
-								Powered by Magenta
-							</Typography>
-						</Grid> */}
-							{/* </Grid> */}
+						<Grid item>
+							<Container maxWidth='md' disableGutters>
+								<RecordPlayTranscribe
+									sequence={currentSample}
+									callback={scoreCallback}
+									tempo={tempo}
+									timeout={fadeLength}
+									delay={sliderTimeout + 800}
+								/>
+							</Container>
 						</Grid>
-					</Container>
+						<Grid item>
+							<Container maxWidth='sm' disableGutters>
+								<Fade
+									in={true}
+									timeout={fadeLength}
+									style={{ transitionDelay: fades.video }}
+								>
+									<iframe
+										className={classes.video}
+										title='intellear-vid'
+										width='560'
+										height='315'
+										src='https://www.youtube-nocookie.com/embed/wnxTqxL7pBQ'
+										allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'
+										scrolling='auto'
+										frameBorder='0'
+										allowFullScreen
+									/>
+								</Fade>
+							</Container>
+						</Grid>
+					</Grid>
 				</div>
 			</main>
 			<footer className={classes.footer}>
