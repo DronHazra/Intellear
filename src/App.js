@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RecordPlayTranscribe from './components/RecordPlayTranscribe';
 // import { ReactComponent as GithubLogo } from './static/iconmonstr-github-1.svg';
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,6 +27,10 @@ import { sequences } from '@magenta/music/node/core';
 import TextCard from './components/intellear_text';
 import Process from './components/process';
 import Favorite from '@material-ui/icons/Favorite';
+import notif1 from './sounds/generation.wav';
+import loading from './sounds/ui_loading.wav';
+import onLoad from './sounds/notification_ambient.wav';
+import celebration from './sounds/navigation_selection-complete-celebration.wav';
 //eslint-disable-next-line
 import worker from 'workerize-loader!./worker.js';
 
@@ -115,6 +119,12 @@ const useStyles = makeStyles(theme => ({
 }));
 // const generateWorker = new GenerateWorker();
 
+const notif1Audio = new Audio(notif1);
+const loadingAudio = new Audio(loading);
+loadingAudio.loop = true;
+const onPageLoadAudio = new Audio(onLoad);
+const celebrationAudio = new Audio(celebration);
+
 export default function App() {
 	const mobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
 	const [temperature, setTemperature] = useState(1.0);
@@ -125,12 +135,15 @@ export default function App() {
 	const [genComplete, setGenComplete] = useState(false);
 	const [activeStep, setActiveStep] = useState(0);
 	let safari = window.webkitOfflineAudioContext ? true : false;
-
+	useEffect(() => {
+		onPageLoadAudio.play();
+	}, []);
 	const sliderTimeout = 400;
 	const fadeLength = 750;
 	const classes = useStyles();
 	const [scoreSnack, setScoreSnack] = useState(false);
 	const scoreCallback = n => {
+		celebrationAudio.play();
 		setScoreSnack(true);
 		setScore(n);
 	};
@@ -145,23 +158,19 @@ export default function App() {
 	};
 
 	const [currentSample, newSample] = useState(null);
-
-	const handleClose = () => {
-		setGenComplete(false);
+	const playLoadingAudio = () => {
+		setTimeout(() => loadingAudio.play(), 800);
 	};
-	const handleExpansion = () => {
-		setExpanded(!dialogExpanded);
-	};
-	// useEffect(() => {
-	// 	setScoreSnack(true);
-	// }, [score, scoreSnack]);
 	const generate = () => {
 		setGenerating(true);
+		playLoadingAudio();
 		instance.generate(temperature).then(sample => {
 			newSample(sequences.mergeConsecutiveNotes(sample));
 			setActiveStep(1);
 			setGenerating(false);
 			setGenComplete(true);
+			loadingAudio.pause();
+			notif1Audio.play();
 		});
 	};
 	return (
@@ -283,7 +292,9 @@ export default function App() {
 								>
 									<Card variant='outlined'>
 										<CardActionArea
-											onClick={handleExpansion}
+											onClick={() =>
+												setExpanded(!dialogExpanded)
+											}
 											className={classes.cardAction}
 										>
 											<Typography
@@ -556,7 +567,7 @@ export default function App() {
 				onClose={() => setGenComplete(false)}
 				autoHideDuration={6000}
 			>
-				<Alert onClose={handleClose} severity='success'>
+				<Alert onClose={() => setGenComplete(false)} severity='success'>
 					We're done generating — <strong>get ear training!</strong>
 				</Alert>
 			</Snackbar>

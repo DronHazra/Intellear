@@ -3,6 +3,8 @@ import { Button } from '@material-ui/core';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { AppContext } from '../App';
 import { useContext } from 'react';
+import tap from '../sounds/ui_tap.wav';
+const tapAudio = new Audio(tap);
 
 export default function PlayRecordingButton(props) {
 	const step = useContext(AppContext);
@@ -11,6 +13,7 @@ export default function PlayRecordingButton(props) {
 	const mobile = step.mobile;
 
 	const handleClick = () => {
+		tapAudio.play();
 		if (playing) {
 			player.pause();
 			toggle(false);
