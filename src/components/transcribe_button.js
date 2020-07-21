@@ -4,7 +4,8 @@ import CreateIcon from '@material-ui/icons/Create';
 import { OnsetsAndFrames } from '@magenta/music/node/transcription';
 import { AppContext } from '../App';
 import { StaffSVGVisualizer, sequences } from '@magenta/music/node/core';
-
+import tap from '../sounds/ui_tap.wav';
+const tapAudio = new Audio(tap);
 export default function TranscribeButton(props) {
 	const model = new OnsetsAndFrames(
 		'https://storage.googleapis.com/magentadata/js/checkpoints/transcription/onsets_frames_uni'
@@ -14,6 +15,7 @@ export default function TranscribeButton(props) {
 
 	const { url, sequence, sequenceCallback, ...others } = props;
 	const handleClick = async () => {
+		tapAudio.play();
 		console.log('in effect');
 		if (model) {
 			console.log('in transcription');

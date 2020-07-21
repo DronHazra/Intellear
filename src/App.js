@@ -30,6 +30,7 @@ import Favorite from '@material-ui/icons/Favorite';
 import notif1 from './sounds/generation.wav';
 import loading from './sounds/ui_loading.wav';
 import onLoad from './sounds/notification_ambient.wav';
+import celebration from './sounds/navigation_selection-complete-celebration.wav';
 //eslint-disable-next-line
 import worker from 'workerize-loader!./worker.js';
 
@@ -122,6 +123,7 @@ const notif1Audio = new Audio(notif1);
 const loadingAudio = new Audio(loading);
 loadingAudio.loop = true;
 const onPageLoadAudio = new Audio(onLoad);
+const celebrationAudio = new Audio(celebration);
 
 export default function App() {
 	const mobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
@@ -141,6 +143,7 @@ export default function App() {
 	const classes = useStyles();
 	const [scoreSnack, setScoreSnack] = useState(false);
 	const scoreCallback = n => {
+		celebrationAudio.play();
 		setScoreSnack(true);
 		setScore(n);
 	};

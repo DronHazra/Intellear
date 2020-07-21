@@ -13,6 +13,8 @@ import TranscribeButton from './transcribe_button';
 import { Fade, Snackbar, Container } from '@material-ui/core';
 import notes from '../notes';
 import { Alert } from '@material-ui/lab';
+import tap from '../sounds/ui_tap.wav';
+const tapAudio = new Audio(tap);
 
 const useStyles = makeStyles({
 	root: {
@@ -30,6 +32,7 @@ export default function RecordPlayTranscribe(props) {
 	const mobile = step.mobile;
 
 	const toggleRecord = () => {
+		tapAudio.play();
 		if (step.recordingBroken) {
 			setOpen(true);
 		} else {
