@@ -23,7 +23,7 @@ import {
 	useMediaQuery,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { sequences } from '@magenta/music/node/core';
+import * as mm from '@magenta/music/es6';
 import TextCard from './components/intellear_text';
 import Process from './components/process';
 import Favorite from '@material-ui/icons/Favorite';
@@ -165,7 +165,7 @@ export default function App() {
 		setGenerating(true);
 		playLoadingAudio();
 		instance.generate(temperature).then(sample => {
-			newSample(sequences.mergeConsecutiveNotes(sample));
+			newSample(mm.sequences.mergeConsecutiveNotes(sample));
 			setActiveStep(1);
 			setGenerating(false);
 			setGenComplete(true);

@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { AppContext } from '../App';
 import Button from '@material-ui/core/Button';
 import HearingIcon from '@material-ui/icons/Hearing';
-import { SoundFontPlayer } from '@magenta/music/node/core';
+import * as mm from '@magenta/music/es6';
 import { useContext } from 'react';
 
 export default function PlayButton(props) {
 	const step = useContext(AppContext);
 	const [player] = useState(
-		new SoundFontPlayer(
+		new mm.SoundFontPlayer(
 			'https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus'
 		)
 	);

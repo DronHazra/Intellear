@@ -1,13 +1,12 @@
 import React, { useContext } from 'react';
 import { Button } from '@material-ui/core';
 import CreateIcon from '@material-ui/icons/Create';
-import { OnsetsAndFrames } from '@magenta/music/node/transcription';
 import { AppContext } from '../App';
-import { StaffSVGVisualizer, sequences } from '@magenta/music/node/core';
+import * as mm from '@magenta/music/es6';
 import tap from '../sounds/ui_tap.wav';
 const tapAudio = new Audio(tap);
 export default function TranscribeButton(props) {
-	const model = new OnsetsAndFrames(
+	const model = new mm.OnsetsAndFrames(
 		'https://storage.googleapis.com/magentadata/js/checkpoints/transcription/onsets_frames_uni'
 	);
 	const step = useContext(AppContext);
@@ -23,7 +22,7 @@ export default function TranscribeButton(props) {
 				await model.initialize();
 			}
 			let transcribedSequence = await model.transcribeFromAudioURL(url);
-			transcribedSequence = sequences.quantizeNoteSequence(
+			transcribedSequence = mm.sequences.quantizeNoteSequence(
 				transcribedSequence,
 				4
 			);
@@ -44,7 +43,7 @@ export default function TranscribeButton(props) {
 			score = Math.round(score);
 			sequenceCallback(score);
 			console.log('visualizing');
-			const visualizer = new StaffSVGVisualizer(
+			const visualizer = new mm.StaffSVGVisualizer(
 				sequence,
 				document.getElementsByClassName('staffArea')[0],
 				{ noteRGB: [33, 33, 33] }
