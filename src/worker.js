@@ -9,7 +9,7 @@
 // importScripts(
 // 	'https://cdn.jsdelivr.net/npm/@magenta/music@^1.12.0/es6/music_vae.js'
 // );
-const model = require('@magenta/music/node/music_vae');
+const model = require('@magenta/music/es6/musicvae.js');
 
 const mvae = new model.MusicVAE(
 	'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2'
