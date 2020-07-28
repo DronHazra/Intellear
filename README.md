@@ -2,7 +2,7 @@
 
 [Intellear](https://intellear.com/) is an AI-powered online ear-training web-app! It's powered by [Magenta.js](https://magenta.tensorflow.org/), using their [MusicVAE](https://magenta.tensorflow.org/music-vae) and [Onsets and Frames](https://magenta.tensorflow.org/onsets-frames) models. 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using components from [Material-UI](https://material-ui.com/).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using components from [Material-UI](https://material-ui.com/). It is licensed under the [MIT license](LICENSE).
 
 ## Start working
 
