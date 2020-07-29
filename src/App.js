@@ -528,7 +528,7 @@ export default function App() {
 										title='intellear-vid'
 										width='560'
 										height='315'
-										src='https://www.youtube-nocookie.com/embed/wnxTqxL7pBQ'
+										src='https://www.youtube.com/embed/xMzG0uYZlbg'
 										allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'
 										scrolling='auto'
 										frameBorder='0'
