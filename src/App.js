@@ -32,7 +32,7 @@ import loading from './sounds/ui_loading.wav';
 import onLoad from './sounds/notification_ambient.wav';
 import celebration from './sounds/navigation_selection-complete-celebration.wav';
 //eslint-disable-next-line
-import worker from 'workerize-loader!./worker.js';
+// import worker from 'workerize-loader!./worker.js';
 
 export const AppContext = React.createContext({
 	step: 0,
@@ -152,7 +152,7 @@ export default function App() {
 		setScoreSnack(true);
 		setScore(n);
 	};
-	let instance = worker();
+	// let instance = worker();
 	const fades = {
 		header: 500,
 		subheader: 800,
