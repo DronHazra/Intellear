@@ -528,7 +528,7 @@ export default function App() {
 										title='intellear-vid'
 										width='560'
 										height='315'
-										src='https://www.youtube.com/embed/xMzG0uYZlbg'
+										src='https://www.youtube.com/embed/0cQTrxc9-5c'
 										allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'
 										scrolling='auto'
 										frameBorder='0'
