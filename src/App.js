@@ -565,7 +565,7 @@ export default function App() {
 						color='inherit'
 						href='https://github.com/DronHazra/Intellear/blob/master/LICENSE'
 					>
-						MIT License
+						Apache License 2.0
 					</Link>{' '}
 					{'.'}
 				</Typography>
