@@ -34,6 +34,7 @@ import celebration from './sounds/navigation_selection-complete-celebration.wav'
 //eslint-disable-next-line
 // import worker from 'workerize-loader!./worker.js';
 
+// this context is passed throughout the app to manage the process, distribute permissions and handle global ui changes. might refactor this into separate contexts in the future
 export const AppContext = React.createContext({
 	step: 0,
 	changeStep: () => {},
@@ -119,6 +120,7 @@ const useStyles = makeStyles(theme => ({
 }));
 // const generateWorker = new GenerateWorker();
 
+// load in the sound effects
 const notif1Audio = new Audio(notif1);
 const loadingAudio = new Audio(loading);
 loadingAudio.loop = true;
@@ -126,33 +128,49 @@ const onPageLoadAudio = new Audio(onLoad);
 const celebrationAudio = new Audio(celebration);
 
 export default function App() {
+	// check if the screen is small - doesn't change so doesn't need to be stateful
 	const mobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
+	const classes = useStyles();
 	const [mvae] = useState(
 		new mm.MusicVAE(
 			'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2'
 		)
 	);
 	const [temperature, setTemperature] = useState(1.0);
+
+	// expand and contract the generation card
 	const [dialogExpanded, setExpanded] = useState(true);
 	const [score, setScore] = useState(null);
 	const [tempo, setTempo] = useState(120);
+
+	// used to inform the loading bars and the alert
 	const [isGenerating, setGenerating] = useState(false);
 	const [genComplete, setGenComplete] = useState(false);
+
+	// control the steps of the process
 	const [activeStep, setActiveStep] = useState(0);
+
 	let safari = window.webkitOfflineAudioContext ? true : false;
+
 	useEffect(() => {
+		// play once the page loads
 		onPageLoadAudio.play();
 	}, []);
+
+	// used to synchronize fades
 	const sliderTimeout = 400;
 	const fadeLength = 750;
-	const classes = useStyles();
+
 	const [scoreSnack, setScoreSnack] = useState(false);
+
 	const scoreCallback = n => {
+		// this will be passed to child components to lift state up
 		celebrationAudio.play();
 		setScoreSnack(true);
 		setScore(n);
 	};
 	// let instance = worker();
+
 	const fades = {
 		header: 500,
 		subheader: 800,
@@ -163,9 +181,12 @@ export default function App() {
 	};
 
 	const [currentSample, newSample] = useState(null);
+
 	const playLoadingAudio = () => {
+		// used to delay playing the loading audio
 		setTimeout(() => loadingAudio.play(), 800);
 	};
+
 	const generate = async () => {
 		setGenerating(true);
 		playLoadingAudio();
@@ -180,6 +201,7 @@ export default function App() {
 		setGenComplete(true);
 		loadingAudio.pause();
 		notif1Audio.play();
+		// unused worker code
 		// instance.generate(temperature).then(sample => {
 		// 	newSample(mm.sequences.mergeConsecutiveNotes(sample));
 		// 	setActiveStep(1);

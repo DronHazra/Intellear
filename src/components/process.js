@@ -24,7 +24,7 @@ export default function Process(props) {
 	const steps = getSteps();
 	const step = useContext(AppContext);
 	const classes = useStyles();
-	const matches = step.mobile;
+	const mobile = step.mobile;
 	return (
 		<Fade {...props}>
 			<Stepper
@@ -32,7 +32,7 @@ export default function Process(props) {
 				square={false}
 				variant='outlined'
 				className={classes.root}
-				orientation={matches ? 'vertical' : 'horizontal'}
+				orientation={mobile ? 'vertical' : 'horizontal'}
 			>
 				{steps.map(label => {
 					return (

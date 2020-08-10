@@ -24,13 +24,14 @@ export default function PlayRecordingButton(props) {
 		}
 	};
 	useEffect(() => {
+		// update audio player whenever the recorded audio changes
 		setPlayer(new Audio(props.url));
 	}, [props.url]);
 	useEffect(() => {
 		if (player.ended) {
 			toggle(false);
 		}
-	}, [player]);
+	});
 	return (
 		<Button
 			{...props}

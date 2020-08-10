@@ -26,6 +26,7 @@ export default function RecordPlayTranscribe(props) {
 	const classes = useStyles();
 	//const [permission, setPermission] = useState(false);
 	const [audioURL, setAudioURL] = useState('');
+	// recording error message
 	const [open, setOpen] = useState(false);
 	const [recording, setRecord] = useState(false);
 	const step = useContext(AppContext);
@@ -33,6 +34,7 @@ export default function RecordPlayTranscribe(props) {
 
 	const toggleRecord = () => {
 		tapAudio.play();
+
 		if (step.recordingBroken) {
 			setOpen(true);
 		} else {
@@ -97,7 +99,7 @@ export default function RecordPlayTranscribe(props) {
 						<TranscribeButton
 							url={audioURL}
 							sequence={props.sequence}
-							sequenceCallback={props.callback}
+							scoreCallback={props.callback}
 						/>
 					</ButtonGroup>
 				</Fade>

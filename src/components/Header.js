@@ -6,12 +6,10 @@ import {
 	//Button,
 	//SvgIcon,
 } from '@material-ui/core';
-// import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
 import Parallax from '../material_kit_react/Parallax/Parallax';
-//import { ReactComponent as MagentaLogo } from '../static/magenta.svg';
 
-const useStyles = makeStyles((theme) => {
+const useStyles = makeStyles(theme => {
 	return {
 		container: {
 			marginTop: theme.spacing(-45),
@@ -26,7 +24,6 @@ export default function MyHeader(props) {
 	const classes = useStyles();
 
 	return (
-		// <Fade in={true} timeout={500}>
 		<div>
 			<Parallax image={require('../static/piano.jpg')}>
 				<Grid
@@ -72,30 +69,5 @@ export default function MyHeader(props) {
 				<div className={classes.container}></div>
 			</Parallax>
 		</div>
-		/* <AppBar position='static'>
-				<Toolbar>
-					<Typography
-						className={classes.typographyStyles}
-						variant='h5'
-					>
-						Intellear
-					</Typography>
-					{/*
-					<image src='https://magenta.tensorflow.org/assets/magenta-logo.png' />
-					<Button
-						color='secondary'
-						endIcon={
-							<SvgIcon>
-								<MagentaLogo />
-							</SvgIcon>
-						}
-						href='https://magenta.tensorflow.org/'
-						size='large'
-					>
-						Powered by{' '}
-					</Button>*/
-		/* </Toolbar> */
-		/* </AppBar> */
-		// </Fade>
 	);
 }
