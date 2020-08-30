@@ -384,10 +384,7 @@ export default function App() {
 														>
 															<Slider
 																value={tempo}
-																onChange={(
-																	e,
-																	newValue
-																) =>
+																onChange={newValue =>
 																	setTempo(
 																		newValue
 																	)
@@ -445,10 +442,7 @@ export default function App() {
 																value={
 																	temperature
 																}
-																onChange={(
-																	e,
-																	newValue
-																) =>
+																onChange={newValue =>
 																	setTemperature(
 																		newValue
 																	)
@@ -457,7 +451,7 @@ export default function App() {
 																color='primary'
 																min={0.5}
 																step={0.0001}
-																max={3}
+																max={2}
 															/>
 														</Fade>
 													</Grid>
