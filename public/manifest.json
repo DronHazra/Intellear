@@ -1,19 +1,19 @@
 {
-	"short_name": "Intellear",
+	"short_name": "Intellear-beta",
 	"name": "Intellear - AI-powered Ear Training",
 	"icons": [
 		{
 			"src": "favicon.ico",
-			"sizes": "64x64 32x32 24x24 16x16",
+			"sizes": "1024x1024 512x512 192x192 64x64 32x32 24x24 16x16",
 			"type": "image/x-icon"
 		},
 		{
-			"src": "android-chrome-192x192.png",
+			"src": "logo192.png",
 			"type": "image/png",
 			"sizes": "192x192"
 		},
 		{
-			"src": "android-chrome-512x512.png",
+			"src": "logo1@0.5x.png",
 			"type": "image/png",
 			"sizes": "512x512"
 		}
