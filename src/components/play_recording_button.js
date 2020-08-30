@@ -31,7 +31,7 @@ export default function PlayRecordingButton(props) {
 		if (player.ended) {
 			toggle(false);
 		}
-	});
+	}, [player.ended]);
 	return (
 		<Button
 			{...props}
