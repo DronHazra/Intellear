@@ -384,7 +384,10 @@ export default function App() {
 														>
 															<Slider
 																value={tempo}
-																onChange={newValue =>
+																onChange={(
+																	e,
+																	newValue
+																) =>
 																	setTempo(
 																		newValue
 																	)
@@ -442,7 +445,10 @@ export default function App() {
 																value={
 																	temperature
 																}
-																onChange={newValue =>
+																onChange={(
+																	e,
+																	newValue
+																) =>
 																	setTemperature(
 																		newValue
 																	)
