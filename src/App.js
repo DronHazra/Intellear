@@ -32,7 +32,7 @@ import loading from './sounds/ui_loading.wav';
 import onLoad from './sounds/notification_ambient.wav';
 import celebration from './sounds/navigation_selection-complete-celebration.wav';
 //eslint-disable-next-line
-// import worker from 'workerize-loader!./worker.js';
+import worker from 'workerize-loader!./worker.js';
 
 // this context is passed throughout the app to manage the process, distribute permissions and handle global ui changes. might refactor this into separate contexts in the future
 export const AppContext = React.createContext({
@@ -131,11 +131,7 @@ export default function App() {
 	// check if the screen is small - doesn't change so doesn't need to be stateful
 	const mobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
 	const classes = useStyles();
-	const [mvae] = useState(
-		new mm.MusicVAE(
-			'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2'
-		)
-	);
+
 	const [temperature, setTemperature] = useState(1.0);
 
 	// expand and contract the generation card
@@ -169,7 +165,7 @@ export default function App() {
 		setScoreSnack(true);
 		setScore(n);
 	};
-	// let instance = worker();
+	let instance = worker();
 
 	const fades = {
 		header: 500,
@@ -187,29 +183,17 @@ export default function App() {
 		setTimeout(() => loadingAudio.play(), 800);
 	};
 
-	const generate = async () => {
+	const generate = () => {
 		setGenerating(true);
 		playLoadingAudio();
-		if (!mvae.isInitialized()) {
-			await mvae.initialize();
-		}
-
-		const output = await mvae.sample(1, temperature);
-		newSample(mm.sequences.mergeConsecutiveNotes(output[0]));
-		setActiveStep(1);
-		setGenerating(false);
-		setGenComplete(true);
-		loadingAudio.pause();
-		notif1Audio.play();
-		// unused worker code
-		// instance.generate(temperature).then(sample => {
-		// 	newSample(mm.sequences.mergeConsecutiveNotes(sample));
-		// 	setActiveStep(1);
-		// 	setGenerating(false);
-		// 	setGenComplete(true);
-		// 	loadingAudio.pause();
-		// 	notif1Audio.play();
-		// });
+		instance.generate(temperature).then(sample => {
+			newSample(mm.sequences.mergeConsecutiveNotes(sample));
+			setActiveStep(1);
+			setGenerating(false);
+			setGenComplete(true);
+			loadingAudio.pause();
+			notif1Audio.play();
+		});
 	};
 	return (
 		<AppContext.Provider
